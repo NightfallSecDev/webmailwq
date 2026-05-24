@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LETTERDUCK — Sent</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand"><img src="logo.png" class="brand-logo" alt="Logo"> <span class="brand-text">LETTERDUCK</span></div>
+        <button class="theme-toggle" title="Toggle theme"></button>
+            <div class="header-actions" style="display:flex;gap:6px;align-items:center;">
+                <button class="sidebar-toggle-btn" id="sidebar-toggle" title="Toggle Sidebar">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+                
+            </div>
+        </div>
+        <button class="compose-btn" id="compose-btn" onclick="window.location.href='compose.html'"><i class="fa-solid fa-pen-to-square"></i> Compose</button>
+        <nav class="nav-list">
+            <span class="nav-section-label">Mailboxes</span>
+            <a href="index.html"     class="nav-item"><i class="fa-solid fa-inbox icon"></i> Inbox <span class="badge">12</span></a>
+            <a href="sent.html"      class="nav-item active"><i class="fa-regular fa-paper-plane icon"></i> Sent</a>
+            <a href="scheduled.html" class="nav-item"><i class="fa-regular fa-clock icon"></i> Scheduled</a>
+            <a href="drafts.html"    class="nav-item"><i class="fa-solid fa-file-lines icon"></i> Drafts</a>
+            <a href="starred.html"   class="nav-item"><i class="fa-regular fa-star icon"></i> Starred</a>
+            <a href="spam.html"      class="nav-item"><i class="fa-solid fa-ban icon"></i> Spam</a>
+            <a href="trash.html"     class="nav-item"><i class="fa-solid fa-trash icon"></i> Trash</a>
+            <div class="nav-divider"></div>
+            <span class="nav-section-label">More</span>
+            <a href="contacts.html"  class="nav-item"><i class="fa-solid fa-address-book icon"></i> Contacts</a>
+            <a href="logs.html"      class="nav-item"><i class="fa-solid fa-clipboard-list icon"></i> Audit Logs</a>
+            <a href="settings.html"  class="nav-item"><i class="fa-solid fa-gear icon"></i> Settings</a>
+            <a href="login.html"     class="nav-item" style="color:var(--brand-danger)"><i class="fa-solid fa-right-from-bracket icon"></i> Sign Out</a>
+        </nav>
+
+        <!-- Live Clock -->
+        <div class="sidebar-clock">
+            <div class="clock-time" id="sidebar-time">--:--:-- --</div>
+            <div class="clock-date" id="sidebar-date">Loading…</div>
+        </div>
+
+        <!-- Profile -->
+                <!-- Storage -->
+        <div class="sidebar-storage" id="storage-widget">
+            <div class="storage-info">
+                <span>Storage</span>
+                <span id="storage-text">Loading...</span>
+            </div>
+            <div class="storage-bar">
+                <div class="storage-fill" id="storage-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+        
+<div class="sidebar-profile" id="profile-trigger">
+            <div class="profile-avatar">S</div>
+            <div class="profile-info">
+                <div class="profile-name">Sarah Jenkins</div>
+                <div class="profile-email">sarah@company.com</div>
+            </div>
+            <i class="fa-solid fa-chevron-up profile-chevron"></i>
+            <div class="profile-dropdown" id="profile-dropdown">
+                <button id="switch-account-btn"><i class="fa-solid fa-rotate"></i> Switch Account</button>
+                <button id="add-account-btn"><i class="fa-solid fa-user-plus"></i> Add Account</button>
+                <div class="dropdown-divider"></div>
+                <a href="settings.html"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+                <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#"><i class="fa-solid fa-key"></i> Change Password</a>
+                <div class="dropdown-divider"></div>
+                <a href="login.html" class="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+            </div>
+        </div>
+    </aside>
+    <section class="mail-list-pane">
+        <div class="list-header">
+            <h2>Sent</h2>
+            <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Search sent…"></div>
+        </div>
+        <div class="mail-list">
+            <div class="mail-item active">
+                <div class="mail-header-info"><span class="sender">To: Finance Dept</span><span class="date">May 22</span></div>
+                <div class="subject">Q2 Budget Approvals</div>
+                <div class="preview">Attached is the final spreadsheet for the Q2 budget…</div>
+            </div>
+            <div class="mail-item">
+                <div class="mail-header-info"><span class="sender">To: Vendor Logistics</span><span class="date">May 20</span></div>
+                <div class="subject">Re: Supply Chain Delays</div>
+                <div class="preview">Please provide an updated ETA for the incoming shipments…</div>
+            </div>
+        </div>
+    </section>
+    <main class="mail-view-pane">
+        <header class="view-header">
+            <div class="view-header-top">
+                <h1 class="view-subject">Q2 Budget Approvals</h1>
+                
+            </div>
+            <div class="view-meta">
+                <div class="sender-profile">
+                    <div class="avatar" style="background:var(--brand-action)">M</div>
+                    <div class="sender-details">
+                        <div class="name">Me</div>
+                        <div class="email">To: finance@company.com</div>
+                    </div>
+                </div>
+                <div class="view-actions">
+                    <button class="action-btn"><i class="fa-solid fa-reply"></i> Reply</button>
+                    <button class="action-btn"><i class="fa-solid fa-share"></i> Forward</button>
+                    <button class="action-btn danger"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+        </header>
+        <div class="mail-body">
+            <p>Hi Team,</p>
+            <p>Attached is the final spreadsheet for the Q2 budget approvals. Please review the line items for IT infrastructure and confirm approval by EOD.</p>
+            <p>Thanks,<br>Sarah</p>
+        </div>
+    </main>
+</div>
+
+<!-- Account Switcher Modal -->
+<div class="account-modal" id="account-switcher-modal">
+    <div class="account-modal-backdrop"></div>
+    <div class="account-panel">
+        <div class="account-panel-header">
+            Accounts
+            <button class="account-panel-close" onclick="AccountManager.closeAccountModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="account-list" id="account-list"></div>
+        <div class="account-panel-actions">
+            <button class="account-panel-btn add-btn" onclick="AccountManager.addAccount()">
+                <i class="fa-solid fa-plus"></i> Add Another Account
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Account Modal -->
+<div class="modal-backdrop" id="add-account-modal">
+    <div class="compose-modal" style="max-width:420px;">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-user-plus" style="color:var(--brand-action);margin-right:8px;"></i>Add Account</h3>
+            <button class="close-btn" onclick="document.getElementById('add-account-modal').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="compose-body">
+            <div class="compose-form-group">
+                <label>Name</label>
+                <input type="text" id="new-acc-name" placeholder="Full Name">
+            </div>
+            <div class="compose-form-group">
+                <label>Email</label>
+                <input type="email" id="new-acc-email" placeholder="you@example.com">
+            </div>
+            <div class="compose-form-group">
+                <label>IMAP</label>
+                <input type="text" id="new-acc-server" placeholder="imap.example.com">
+            </div>
+        </div>
+        <div class="modal-footer" style="justify-content:flex-end;gap:10px;">
+            <button class="action-btn" onclick="document.getElementById('add-account-modal').classList.remove('open')">Cancel</button>
+            <button class="btn-send" onclick="AccountManager.saveNewAccount()"><i class="fa-solid fa-plus"></i> Add Account</button>
+        </div>
+    </div>
+</div>
+
+<script src="ui-logic.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script src="api-client.js"></script>
+</body>
+</html>

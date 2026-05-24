@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Message — LETTERDUCK</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        body { display: flex; align-items: stretch; overflow: hidden; }
+
+        .compose-page {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* Top Bar */
+        .compose-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 56px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            gap: 12px;
+        }
+        [data-theme="dark"] .compose-topbar {
+            background: rgba(17,17,19,.85);
+            backdrop-filter: blur(20px);
+        }
+        [data-theme="light"] .compose-topbar {
+            background: rgba(255,255,255,.85);
+            backdrop-filter: blur(16px);
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
+        .topbar-left .brand { font-size: .98rem; }
+
+        .back-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: .82rem;
+            font-weight: 600;
+            display: flex; align-items: center; gap: 6px;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .back-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+        .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+        .mode-toggle-group {
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        .mode-btn {
+            padding: 7px 16px;
+            font-size: .8rem;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .mode-btn.active {
+            background: var(--brand-action);
+            color: #fff;
+        }
+        .mode-btn:not(.active):hover { background: var(--bg-hover); color: var(--text-primary); }
+
+        .btn-send-top {
+            padding: 8px 22px;
+            background: linear-gradient(135deg, var(--brand-action), #818CF8);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: .88rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex; align-items: center; gap: 7px;
+            box-shadow: 0 4px 14px rgba(99,102,241,.40);
+            font-family: inherit;
+        }
+        .btn-send-top:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,.55); }
+
+        /* Header Fields */
+        .compose-fields {
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        [data-theme="dark"] .compose-fields { background: rgba(17,17,19,.70); }
+        [data-theme="light"] .compose-fields { background: rgba(255,255,255,.75); }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 24px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 12px;
+            transition: background .15s;
+        }
+        .field-row:last-child { border-bottom: none; }
+        .field-row:focus-within { background: var(--brand-action-glow); }
+
+        .field-label {
+            width: 62px;
+            font-size: .78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            flex-shrink: 0;
+        }
+        .field-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: .92rem;
+            outline: none;
+            font-family: inherit;
+        }
+        .field-input::placeholder { color: var(--text-muted); }
+
+        .cc-toggle {
+            font-size: .75rem;
+            font-weight: 600;
+            color: var(--brand-action);
+            cursor: pointer;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: none;
+            background: var(--brand-action-glow);
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .cc-toggle:hover { opacity: .8; }
+
+        /* WYSIWYG Toolbar */
+        .rich-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        [data-theme="dark"] .rich-toolbar { background: rgba(24,24,27,.80); }
+        [data-theme="light"] .rich-toolbar { background: rgba(250,250,252,.85); }
+
+        .tb-btn {
+            width: 30px; height: 30px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .85rem;
+            transition: var(--transition);
+        }
+        .tb-btn:hover { background: var(--brand-action-glow); color: var(--brand-action); }
+        .tb-btn.active { background: var(--brand-action); color: #fff; }
+
+        .tb-sep {
+            width: 1px; height: 20px;
+            background: var(--border-color);
+            margin: 0 4px;
+        }
+
+        .tb-select {
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: .78rem;
+            padding: 3px 6px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .tb-color {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        /* Editor Area */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* WYSIWYG editor */
+        .rich-editor {
+            flex: 1;
+            padding: 28px 40px;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            font-size: .94rem;
+            line-height: 1.75;
+            color: var(--text-primary);
+            overflow-y: auto;
+            min-height: 0;
+        }
+        [data-theme="dark"] .rich-editor { background: rgba(9,9,11,.55); }
+        [data-theme="light"] .rich-editor { background: rgba(250,250,250,.60); }
+        .rich-editor:empty::before {
+            content: attr(data-placeholder);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* CODE DESIGN MODE */
+        .code-container {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+        }
+        .code-container.visible { display: flex; }
+
+        .code-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+        }
+        .code-panel-header {
+            padding: 8px 14px;
+            font-size: .75rem;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; gap: 8px;
+        }
+        [data-theme="dark"] .code-panel-header { background: rgba(17,17,19,.90); }
+        [data-theme="light"] .code-panel-header { background: rgba(245,245,248,.90); }
+
+        .code-editor {
+            flex: 1;
+            width: 100%;
+            border: none;
+            padding: 20px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: .84rem;
+            line-height: 1.7;
+            resize: none;
+            outline: none;
+            overflow-y: auto;
+        }
+        [data-theme="dark"] .code-editor {
+            background: #0d0d0f;
+            color: #a78bfa;
+        }
+        [data-theme="light"] .code-editor {
+            background: #fafafa;
+            color: #1e1b4b;
+        }
+
+        .preview-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .preview-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: #fff;
+        }
+
+        /* Status Bar */
+        .compose-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 24px;
+            font-size: .75rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        [data-theme="dark"] .compose-status { background: rgba(9,9,11,.80); }
+        [data-theme="light"] .compose-status { background: rgba(250,250,250,.85); }
+
+        .status-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--brand-success);
+            margin-right: 5px;
+        }
+        .attach-area {
+            display: flex; gap: 8px; align-items: center;
+        }
+        .attach-chip {
+            display: flex; align-items: center; gap: 5px;
+            background: var(--brand-action-glow);
+            color: var(--brand-action);
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+        .attach-chip button {
+            background: none; border: none; color: inherit;
+            cursor: pointer; font-size: .75rem; line-height: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="compose-page">
+
+    <!-- TOP BAR -->
+    <header class="compose-topbar">
+        <div class="topbar-left">
+            <button class="back-btn" onclick="history.back()">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <div class="brand"><img src="logo.png" class="brand-logo" alt="Logo"> <span class="brand-text">LETTERDUCK</span></div>
+        </div>
+
+        <div class="mode-toggle-group">
+            <button class="mode-btn active" id="btn-rich" onclick="switchMode('rich')">
+                <i class="fa-solid fa-font"></i> Rich Text
+            </button>
+            <button class="mode-btn" id="btn-code" onclick="switchMode('code')">
+                <i class="fa-solid fa-code"></i> HTML Designer
+            </button>
+        </div>
+
+        <div class="topbar-actions">
+            <button class="theme-toggle" id="theme-toggle"></button>
+            <button class="back-btn" id="save-draft-btn"><i class="fa-regular fa-floppy-disk"></i> Save Draft</button>
+            <button class="btn-send-top" id="send-btn"><i class="fa-regular fa-paper-plane"></i> Send Message</button>
+        </div>
+    </header>
+
+    <!-- HEADER FIELDS -->
+    <div class="compose-fields">
+        <div class="field-row">
+            <span class="field-label">From</span>
+            <input class="field-input" type="text" value="sarah.jenkins@company.com" readonly style="opacity:.7;">
+        </div>
+        <div class="field-row">
+            <span class="field-label">To</span>
+            <input class="field-input" id="field-to" type="email" placeholder="recipient@example.com">
+            <button class="cc-toggle" onclick="toggleCC()">CC / BCC</button>
+        </div>
+        <div class="field-row" id="cc-row" style="display:none;">
+            <span class="field-label">CC</span>
+            <input class="field-input" id="field-cc" type="email" placeholder="cc@example.com">
+        </div>
+        <div class="field-row" id="bcc-row" style="display:none;">
+            <span class="field-label">BCC</span>
+            <input class="field-input" id="field-bcc" type="email" placeholder="bcc@example.com">
+        </div>
+        <div class="field-row">
+            <span class="field-label">Subject</span>
+            <input class="field-input" id="field-subject" type="text" placeholder="Email subject…">
+        </div>
+    </div>
+
+    <!-- RICH TEXT TOOLBAR -->
+    <div class="rich-toolbar" id="rich-toolbar">
+        <select class="tb-select" onchange="execCmd('fontName', this.value)">
+            <option value="Inter, sans-serif">Inter</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="'Courier New', monospace">Mono</option>
+            <option value="Arial, sans-serif">Arial</option>
+        </select>
+        <select class="tb-select" onchange="execCmd('fontSize', this.value)">
+            <option value="3">Normal</option>
+            <option value="1">Small</option>
+            <option value="4">Large</option>
+            <option value="5">XL</option>
+        </select>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" title="Bold" onclick="execCmd('bold')"><i class="fa-solid fa-bold"></i></button>
+        <button class="tb-btn" title="Italic" onclick="execCmd('italic')"><i class="fa-solid fa-italic"></i></button>
+        <button class="tb-btn" title="Underline" onclick="execCmd('underline')"><i class="fa-solid fa-underline"></i></button>
+        <button class="tb-btn" title="Strikethrough" onclick="execCmd('strikeThrough')"><i class="fa-solid fa-strikethrough"></i></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" title="Align Left" onclick="execCmd('justifyLeft')"><i class="fa-solid fa-align-left"></i></button>
+        <button class="tb-btn" title="Center" onclick="execCmd('justifyCenter')"><i class="fa-solid fa-align-center"></i></button>
+        <button class="tb-btn" title="Align Right" onclick="execCmd('justifyRight')"><i class="fa-solid fa-align-right"></i></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" title="Bullet List" onclick="execCmd('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+        <button class="tb-btn" title="Numbered List" onclick="execCmd('insertOrderedList')"><i class="fa-solid fa-list-ol"></i></button>
+        <button class="tb-btn" title="Indent" onclick="execCmd('indent')"><i class="fa-solid fa-indent"></i></button>
+        <button class="tb-btn" title="Outdent" onclick="execCmd('outdent')"><i class="fa-solid fa-outdent"></i></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" title="Insert Link" onclick="insertLink()"><i class="fa-solid fa-link"></i></button>
+        <button class="tb-btn" title="Remove Link" onclick="execCmd('unlink')"><i class="fa-solid fa-link-slash"></i></button>
+        <button class="tb-btn" title="Insert Image" onclick="insertImage()"><i class="fa-regular fa-image"></i></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" title="Blockquote" onclick="execCmd('formatBlock','blockquote')"><i class="fa-solid fa-quote-left"></i></button>
+        <button class="tb-btn" title="Code Block" onclick="execCmd('formatBlock','pre')"><i class="fa-solid fa-code"></i></button>
+        <button class="tb-btn" title="Heading 1" onclick="execCmd('formatBlock','h1')" style="font-size:.7rem;font-weight:800;">H1</button>
+        <button class="tb-btn" title="Heading 2" onclick="execCmd('formatBlock','h2')" style="font-size:.7rem;font-weight:800;">H2</button>
+        <div class="tb-sep"></div>
+        <input type="color" class="tb-color" title="Text Color" value="#6366F1" onchange="execCmd('foreColor', this.value)">
+        <input type="color" class="tb-color" title="Highlight Color" value="#fde68a" onchange="execCmd('hiliteColor', this.value)">
+        <div class="tb-sep"></div>
+        <button class="tb-btn" title="Clear Formatting" onclick="execCmd('removeFormat')"><i class="fa-solid fa-eraser"></i></button>
+        <button class="tb-btn" title="Undo" onclick="execCmd('undo')"><i class="fa-solid fa-rotate-left"></i></button>
+        <button class="tb-btn" title="Redo" onclick="execCmd('redo')"><i class="fa-solid fa-rotate-right"></i></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" title="Attach File" onclick="document.getElementById('file-input').click()">
+            <i class="fa-solid fa-paperclip"></i>
+        </button>
+        <input type="file" id="file-input" multiple style="display:none;" onchange="handleAttachments(this)">
+    </div>
+
+    <!-- EDITOR AREA -->
+    <div class="editor-container">
+
+        <!-- RICH TEXT EDITOR -->
+        <div id="rich-editor"
+             class="rich-editor"
+             contenteditable="true"
+             data-placeholder="Write your email here…">
+        </div>
+
+        <!-- HTML CODE DESIGNER -->
+        <div class="code-container" id="code-container">
+            <div class="code-panel">
+                <div class="code-panel-header">
+                    <i class="fa-solid fa-code" style="color:var(--brand-action)"></i> HTML · CSS · JS Editor
+                    <button class="tb-btn" style="margin-left:auto;" title="Format Code" onclick="formatCode()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </button>
+                    <button class="tb-btn" title="Load Rich Text into HTML" onclick="syncRichToCode()">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    </button>
+                </div>
+                <textarea class="code-editor" id="code-editor" spellcheck="false" oninput="updatePreview()" placeholder="<!-- Write your HTML email template here -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: Inter, sans-serif; background: #09090B; color: #FAFAFA; margin: 0; }
+  .card { max-width: 600px; margin: 40px auto; background: rgba(17,17,19,.95);
+          border: 1px solid rgba(255,255,255,.08); border-radius: 16px; overflow: hidden; }
+  .header { background: linear-gradient(135deg,#6366F1,#818CF8); padding: 32px; text-align: center; }
+  .header h1 { color: #fff; margin: 0; font-size: 1.8rem; }
+  .body { padding: 32px; line-height: 1.7; }
+  .btn { display: inline-block; background: #6366F1; color: #fff;
+         padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class=&quot;card&quot;>
+  <div class=&quot;header&quot;><h1>✉️ Your Subject</h1></div>
+  <div class=&quot;body&quot;>
+    <p>Hello,</p>
+    <p>Your message goes here.</p>
+    <a href=&quot;#&quot; class=&quot;btn&quot;>Call to Action</a>
+  </div>
+</div>
+</body>
+</html>"></textarea>
+            </div>
+            <div class="preview-panel">
+                <div class="code-panel-header">
+                    <i class="fa-solid fa-eye" style="color:var(--brand-success)"></i> Live Preview
+                    <span id="preview-size" style="margin-left:auto;font-weight:500;">600px</span>
+                </div>
+                <iframe class="preview-frame" id="preview-frame"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="compose-status">
+        <div><span class="status-dot"></span> Draft auto-saved <span id="save-time"></span></div>
+        <div class="attach-area" id="attach-area"></div>
+        <div id="word-count">0 words</div>
+    </div>
+</div>
+
+<script src="ui-logic.js"></script>
+<script>
+// ── Mode Switcher ──────────────────────────────────
+function switchMode(mode) {
+    const richEditor = document.getElementById('rich-editor');
+    const codeContainer = document.getElementById('code-container');
+    const richToolbar = document.getElementById('rich-toolbar');
+    const btnRich = document.getElementById('btn-rich');
+    const btnCode = document.getElementById('btn-code');
+
+    if (mode === 'rich') {
+        richEditor.style.display = '';
+        codeContainer.classList.remove('visible');
+        richToolbar.style.display = '';
+        btnRich.classList.add('active');
+        btnCode.classList.remove('active');
+    } else {
+        richEditor.style.display = 'none';
+        codeContainer.classList.add('visible');
+        richToolbar.style.display = 'none';
+        btnRich.classList.remove('active');
+        btnCode.classList.add('active');
+        updatePreview();
+    }
+}
+
+// ── Exec Command ─────────────────────────────────
+function execCmd(cmd, val = null) {
+    document.getElementById('rich-editor').focus();
+    document.execCommand(cmd, false, val);
+}
+
+// ── Insert Link ───────────────────────────────────
+function insertLink() {
+    const url = prompt('Enter URL:');
+    if (url) execCmd('createLink', url);
+}
+
+// ── Insert Image ──────────────────────────────────
+function insertImage() {
+    const url = prompt('Enter image URL:');
+    if (url) execCmd('insertImage', url);
+}
+
+// ── Live Preview Update ───────────────────────────
+function updatePreview() {
+    const code = document.getElementById('code-editor').value;
+    const frame = document.getElementById('preview-frame');
+    try {
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        doc.open(); doc.write(code); doc.close();
+    } catch(e) {}
+}
+
+// ── Sync rich editor → code editor ───────────────
+function syncRichToCode() {
+    const html = document.getElementById('rich-editor').innerHTML;
+    const template = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: Inter, sans-serif; background: #ffffff; color: #09090B; padding: 32px; line-height: 1.7; max-width: 640px; margin: 0 auto; }
+  blockquote { border-left: 3px solid #6366F1; margin: 0; padding: 0 16px; color: #71717A; }
+  a { color: #6366F1; }
+  img { max-width: 100%; }
+</style>
+</head>
+<body>
+${html}
+</body>
+</html>`;
+    document.getElementById('code-editor').value = template;
+    updatePreview();
+}
+
+// ── CC/BCC Toggle ──────────────────────────────────
+function toggleCC() {
+    const cc = document.getElementById('cc-row');
+    const bcc = document.getElementById('bcc-row');
+    const visible = cc.style.display !== 'none';
+    cc.style.display = visible ? 'none' : 'flex';
+    bcc.style.display = visible ? 'none' : 'flex';
+}
+
+// ── Attachments ────────────────────────────────────
+function handleAttachments(input) {
+    const area = document.getElementById('attach-area');
+    Array.from(input.files).forEach(file => {
+        const chip = document.createElement('span');
+        chip.className = 'attach-chip';
+        chip.innerHTML = `<i class="fa-solid fa-file"></i> ${file.name} <button onclick="this.parentElement.remove()">×</button>`;
+        area.appendChild(chip);
+    });
+}
+
+// ── Word Count ─────────────────────────────────────
+document.getElementById('rich-editor').addEventListener('input', () => {
+    const text = document.getElementById('rich-editor').innerText || '';
+    const words = text.trim().split(/\s+/).filter(w => w).length;
+    document.getElementById('word-count').textContent = words + ' word' + (words !== 1 ? 's' : '');
+    scheduleAutoSave();
+});
+
+// ── Auto Save ──────────────────────────────────────
+let saveTimer;
+function scheduleAutoSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+        const now = new Date();
+        document.getElementById('save-time').textContent =
+            'at ' + now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }, 1500);
+}
+
+// ── Save Draft Button ──────────────────────────────
+document.getElementById('save-draft-btn').addEventListener('click', () => {
+    scheduleAutoSave();
+    const btn = document.getElementById('save-draft-btn');
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+    btn.style.color = 'var(--brand-success)';
+    setTimeout(() => {
+        btn.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Draft';
+        btn.style.color = '';
+    }, 2000);
+});
+
+// ── Send Button ────────────────────────────────────
+document.getElementById('send-btn').addEventListener('click', async () => {
+    const to = document.getElementById('field-to').value.trim();
+    const subject = document.getElementById('field-subject').value.trim();
+    if (!to) { document.getElementById('field-to').focus(); return; }
+    
+    let body = '';
+    if (document.getElementById('composer-designer').classList.contains('active')) {
+        body = document.getElementById('preview-frame').srcdoc;
+    } else {
+        body = document.getElementById('rich-text-editor').innerHTML;
+    }
+
+    const btn = document.getElementById('send-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+    
+    // Call the API
+    const accountId = localStorage.getItem('accountId') || 1;
+    const success = await API.sendEmail(accountId, to, subject, body);
+    
+    if (success) {
+        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Sent!';
+        btn.style.background = 'linear-gradient(135deg,#10B981,#34D399)';
+        setTimeout(() => window.location.href = 'index.html', 1500);
+    } else {
+        btn.innerHTML = originalText;
+        alert('Failed to send email. Please check the backend connection.');
+    }
+});
+
+// ── Format Code Placeholder ────────────────────────
+function formatCode() {
+    // Basic: just alert user. In production, integrate Prettier via CDN
+    alert('For full code formatting, integrate Prettier.js.');
+}
+
+// ── Set initial save time ──────────────────────────
+document.getElementById('save-time').textContent = '';
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script src="api-client.js"></script>
+</body>
+</html>

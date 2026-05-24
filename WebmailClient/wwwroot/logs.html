@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LETTERDUCK — Audit Logs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .logs-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-surface);
+            overflow-y: auto;
+        }
+        [data-theme="dark"] .logs-pane { background: rgba(17,17,19,.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        [data-theme="light"] .logs-pane { background: rgba(255,255,255,.80); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+        .logs-header {
+            padding: 30px 40px 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: var(--bg-surface);
+            z-index: 50;
+        }
+        .logs-header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; }
+        
+        .log-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .log-filters input, .log-filters select {
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: .85rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .log-filters input:focus, .log-filters select:focus {
+            border-color: var(--brand-action);
+            box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+        }
+        
+        .logs-content { padding: 40px; max-width: 1200px; width: 100%; margin: 0 auto; }
+        
+        .log-table-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .85rem;
+        }
+        .log-table th, .log-table td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .log-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .75rem;
+            letter-spacing: .05em;
+            background: rgba(0,0,0,0.1);
+        }
+        [data-theme="light"] .log-table th { background: rgba(0,0,0,0.02); }
+        .log-table tr:last-child td { border-bottom: none; }
+        .log-table tr:hover td { background: rgba(255,255,255,0.02); }
+        [data-theme="light"] .log-table tr:hover td { background: rgba(0,0,0,0.01); }
+        
+        .pill { padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: .7rem; text-transform: uppercase; display: inline-block; text-align: center; min-width: 60px; }
+        .pill.info { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .pill.warn { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .pill.error { background: rgba(239,68,68,0.1); color: #ef4444; }
+        .pill.success { background: rgba(16,185,129,0.1); color: #10b981; }
+        
+        .log-message { font-family: monospace; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand"><img src="logo.png" class="brand-logo" alt="Logo"> <span class="brand-text">LETTERDUCK</span></div>
+        <button class="theme-toggle" title="Toggle theme"></button>
+            <div class="header-actions" style="display:flex;gap:6px;align-items:center;">
+                <button class="sidebar-toggle-btn" id="sidebar-toggle" title="Toggle Sidebar"><i class="fa-solid fa-bars-staggered"></i></button>
+                
+            </div>
+        </div>
+        <button class="compose-btn" id="compose-btn" onclick="window.location.href='compose.html'"><i class="fa-solid fa-pen-to-square"></i> Compose</button>
+        <nav class="nav-list">
+            <span class="nav-section-label">Mailboxes</span>
+            <a href="index.html"     class="nav-item"><i class="fa-solid fa-inbox icon"></i> Inbox</a>
+            <a href="sent.html"      class="nav-item"><i class="fa-regular fa-paper-plane icon"></i> Sent</a>
+            <a href="scheduled.html" class="nav-item"><i class="fa-regular fa-clock icon"></i> Scheduled</a>
+            <a href="drafts.html"    class="nav-item"><i class="fa-solid fa-file-lines icon"></i> Drafts</a>
+            <a href="starred.html"   class="nav-item"><i class="fa-regular fa-star icon"></i> Starred</a>
+            <a href="spam.html"      class="nav-item"><i class="fa-solid fa-ban icon"></i> Spam</a>
+            <a href="trash.html"     class="nav-item"><i class="fa-solid fa-trash icon"></i> Trash</a>
+            <div class="nav-divider"></div>
+            <span class="nav-section-label">More</span>
+            <a href="contacts.html"  class="nav-item"><i class="fa-solid fa-address-book icon"></i> Contacts</a>
+            <a href="logs.html"      class="nav-item active"><i class="fa-solid fa-clipboard-list icon"></i> Audit Logs</a>
+            <a href="settings.html"  class="nav-item"><i class="fa-solid fa-gear icon"></i> Settings</a>
+            <a href="login.html"     class="nav-item" style="color:var(--brand-danger)"><i class="fa-solid fa-right-from-bracket icon"></i> Sign Out</a>
+        </nav>
+
+        <!-- Live Clock -->
+        <div class="sidebar-clock">
+            <div class="clock-time" id="sidebar-time">--:--:-- --</div>
+            <div class="clock-date" id="sidebar-date">Loading…</div>
+        </div>
+
+        <!-- Profile -->
+                <!-- Storage -->
+        <div class="sidebar-storage" id="storage-widget">
+            <div class="storage-info">
+                <span>Storage</span>
+                <span id="storage-text">Loading...</span>
+            </div>
+            <div class="storage-bar">
+                <div class="storage-fill" id="storage-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+        
+<div class="sidebar-profile" id="profile-trigger">
+            <div class="avatar">S</div>
+            <div class="profile-details">
+                <div class="name">Sarah Jenkins</div>
+                <div class="email">sarah@company.com</div>
+            </div>
+            <i class="fa-solid fa-chevron-up icon" style="margin-left:auto; opacity:.5;"></i>
+            
+            <div class="profile-dropdown" id="profile-dropdown">
+                <button id="add-account-btn"><i class="fa-solid fa-user-plus"></i> Add Account</button>
+                <div class="dropdown-divider"></div>
+                <a href="settings.html"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+                <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#"><i class="fa-solid fa-key"></i> Change Password</a>
+                <div class="dropdown-divider"></div>
+                <a href="login.html" class="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="logs-pane">
+        <header class="logs-header">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                <div>
+                    <h1>System Audit Logs</h1>
+                    <div class="log-filters">
+                        <input type="text" id="log-search" placeholder="Search logs..." style="width: 250px;" oninput="filterLogs()">
+                        <select id="log-level" onchange="filterLogs()">
+                            <option value="ALL">All Levels</option>
+                            <option value="INFO">Info</option>
+                            <option value="WARN">Warning</option>
+                            <option value="ERROR">Error</option>
+                            <option value="SUCCESS">Success</option>
+                        </select>
+                        <select id="log-module" onchange="filterLogs()">
+                            <option value="ALL">All Modules</option>
+                            <option value="AUTH">Authentication</option>
+                            <option value="IMAP">IMAP Sync</option>
+                            <option value="SMTP">SMTP Queue</option>
+                            <option value="SYSTEM">System Activity</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-primary" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;" onclick="exportLogs()"><i class="fa-solid fa-download" style="margin-right:8px;"></i> Export CSV</button>
+            </div>
+        </header>
+
+        <div class="logs-content">
+            <div class="log-table-container">
+                <table class="log-table" id="log-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Level</th>
+                            <th>Module</th>
+                            <th>Message</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-tbody">
+                        <!-- Logs generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="no-logs" style="display:none; text-align:center; padding: 60px; color: var(--text-muted);">
+                <i class="fa-solid fa-ghost fa-3x" style="opacity:0.2; margin-bottom: 16px;"></i>
+                <div style="font-size: 1.1rem; font-weight: 500;">No logs found matching your criteria.</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Account Switcher Modal (Standard UI Component) -->
+<div class="account-modal" id="account-switcher-modal">
+    <div class="account-modal-backdrop"></div>
+    <div class="account-panel">
+        <div class="account-panel-header">Accounts<button class="account-panel-close" onclick="AccountManager.closeAccountModal()"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="account-list" id="account-list"></div>
+        <div class="account-panel-actions"><button class="account-panel-btn add-btn" onclick="AccountManager.addAccount()"><i class="fa-solid fa-plus"></i> Add Another Account</button></div>
+    </div>
+</div>
+
+<script src="ui-logic.js"></script>
+<script>
+    // Mock Enterprise Log Data
+    const mockLogs = [
+        { time: "2026-05-24 10:42:15", level: "WARN", module: "AUTH", message: "New sign-in from unrecognized device (Linux OS)", ip: "192.168.1.42" },
+        { time: "2026-05-24 10:41:00", level: "SUCCESS", module: "AUTH", message: "User sarah@company.com successfully authenticated via FIDO2", ip: "192.168.1.42" },
+        { time: "2026-05-24 10:40:55", level: "INFO", module: "SYSTEM", message: "Session token requested", ip: "192.168.1.42" },
+        { time: "2026-05-24 10:35:10", level: "INFO", module: "IMAP", message: "IMAP Sync completed. 12 new messages fetched.", ip: "10.0.0.1" },
+        { time: "2026-05-24 10:30:22", level: "ERROR", module: "SMTP", message: "Connection timeout to smtp.enterprise.company.com:465", ip: "10.0.0.1" },
+        { time: "2026-05-24 10:15:00", level: "INFO", module: "IMAP", message: "Folder 'INBOX' marked as synchronized.", ip: "10.0.0.1" },
+        { time: "2026-05-24 09:50:00", level: "WARN", module: "IMAP", message: "Rate limit threshold approached (80%)", ip: "10.0.0.1" },
+        { time: "2026-05-24 09:45:12", level: "SUCCESS", module: "SMTP", message: "Message queued for delivery (Subject: Q2 Planning)", ip: "192.168.1.42" },
+        { time: "2026-05-24 08:30:00", level: "INFO", module: "SYSTEM", message: "Automated database backup completed successfully.", ip: "127.0.0.1" },
+        { time: "2026-05-23 23:15:42", level: "ERROR", module: "AUTH", message: "Failed login attempt (Invalid Password)", ip: "45.33.22.11" },
+        { time: "2026-05-23 23:15:40", level: "ERROR", module: "AUTH", message: "Failed login attempt (Invalid Password)", ip: "45.33.22.11" },
+        { time: "2026-05-23 23:15:38", level: "ERROR", module: "AUTH", message: "Failed login attempt (Invalid Password)", ip: "45.33.22.11" },
+    ];
+
+    function renderLogs(logs) {
+        const tbody = document.getElementById('log-tbody');
+        tbody.innerHTML = '';
+        
+        if (logs.length === 0) {
+            document.getElementById('log-table').style.display = 'none';
+            document.getElementById('no-logs').style.display = 'block';
+            return;
+        } else {
+            document.getElementById('log-table').style.display = 'table';
+            document.getElementById('no-logs').style.display = 'none';
+        }
+
+        logs.forEach(log => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="white-space:nowrap; color:var(--text-secondary);">${log.time}</td>
+                <td><span class="pill ${log.level.toLowerCase()}">${log.level}</span></td>
+                <td style="font-weight:500;">${log.module}</td>
+                <td class="log-message">${log.message}</td>
+                <td style="color:var(--text-muted); font-size:.8rem;">${log.ip}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filterLogs() {
+        const query = document.getElementById('log-search').value.toLowerCase();
+        const level = document.getElementById('log-level').value;
+        const module = document.getElementById('log-module').value;
+
+        const filtered = mockLogs.filter(log => {
+            const matchesQuery = log.message.toLowerCase().includes(query) || log.ip.includes(query) || log.time.includes(query);
+            const matchesLevel = level === 'ALL' || log.level === level;
+            const matchesModule = module === 'ALL' || log.module === module;
+            return matchesQuery && matchesLevel && matchesModule;
+        });
+
+        renderLogs(filtered);
+    }
+
+    function exportLogs() {
+        alert('Logs exported successfully as CSV.');
+    }
+
+    // Initial render
+    document.addEventListener('DOMContentLoaded', () => {
+        renderLogs(mockLogs);
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script src="api-client.js"></script>
+</body>
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LETTERDUCK — Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .settings-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-surface);
+            overflow-y: auto;
+        }
+        [data-theme="dark"] .settings-pane {
+            background: rgba(17,17,19,.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        [data-theme="light"] .settings-pane {
+            background: rgba(255,255,255,.80);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+
+        .settings-header-container {
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-surface);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .settings-header-top {
+            padding: 30px 40px 10px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: none;
+        }
+        .settings-header-top h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -.025em;
+        }
+        .settings-tabs {
+            display: flex;
+            gap: 24px;
+            padding: 0 40px;
+            margin-top: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .settings-tabs::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 0;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: .9rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+        .tab-btn.active {
+            color: var(--brand-action);
+            border-bottom-color: var(--brand-action);
+        }
+        .tab-panel {
+            display: none;
+            animation: fadeIn .3s ease forwards;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .settings-header-top h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -.025em;
+        }
+
+        .settings-content {
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .settings-section {
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .settings-section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+            font-weight: 600;
+            color: var(--brand-action);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 16px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: .95rem;
+            transition: var(--transition);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--brand-action);
+            box-shadow: 0 0 0 3px var(--brand-action-glow);
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .theme-option {
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            cursor: pointer;
+            width: 160px;
+            text-align: center;
+            transition: var(--transition);
+            background: var(--bg-surface);
+        }
+
+        .theme-option:hover {
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        .theme-option.selected {
+            border-color: var(--brand-action);
+            background-color: var(--brand-action-glow);
+        }
+
+        .theme-option i {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .theme-option.selected i {
+            color: var(--brand-action);
+        }
+
+        .btn-primary {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--brand-action), #818CF8);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(99,102,241,.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99,102,241,.45);
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand"><img src="logo.png" class="brand-logo" alt="Logo"> <span class="brand-text">LETTERDUCK</span></div>
+        <button class="theme-toggle" title="Toggle theme"></button>
+            <div class="header-actions" style="display:flex;gap:6px;align-items:center;">
+                <button class="sidebar-toggle-btn" id="sidebar-toggle" title="Toggle Sidebar">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+                
+            </div>
+        </div>
+        <button class="compose-btn" id="compose-btn" onclick="window.location.href='compose.html'"><i class="fa-solid fa-pen-to-square"></i> Compose</button>
+        <nav class="nav-list">
+            <span class="nav-section-label">Mailboxes</span>
+            <a href="index.html"     class="nav-item"><i class="fa-solid fa-inbox icon"></i> Inbox <span class="badge">12</span></a>
+            <a href="sent.html"      class="nav-item"><i class="fa-regular fa-paper-plane icon"></i> Sent</a>
+            <a href="scheduled.html" class="nav-item"><i class="fa-regular fa-clock icon"></i> Scheduled</a>
+            <a href="drafts.html"    class="nav-item"><i class="fa-solid fa-file-lines icon"></i> Drafts</a>
+            <a href="starred.html"   class="nav-item"><i class="fa-regular fa-star icon"></i> Starred</a>
+            <a href="spam.html"      class="nav-item"><i class="fa-solid fa-ban icon"></i> Spam</a>
+            <a href="trash.html"     class="nav-item"><i class="fa-solid fa-trash icon"></i> Trash</a>
+            <div class="nav-divider"></div>
+            <span class="nav-section-label">More</span>
+            <a href="contacts.html"  class="nav-item"><i class="fa-solid fa-address-book icon"></i> Contacts</a>
+            <a href="logs.html"      class="nav-item"><i class="fa-solid fa-clipboard-list icon"></i> Audit Logs</a>
+            <a href="settings.html"  class="nav-item active"><i class="fa-solid fa-gear icon"></i> Settings</a>
+            <a href="login.html"     class="nav-item" style="color:var(--brand-danger)"><i class="fa-solid fa-right-from-bracket icon"></i> Sign Out</a>
+        </nav>
+        
+        <!-- Live Clock -->
+        <div class="sidebar-clock">
+            <div class="clock-time" id="sidebar-time">--:--:-- --</div>
+            <div class="clock-date" id="sidebar-date">Loading…</div>
+        </div>
+
+        <!-- Profile -->
+                <!-- Storage -->
+        <div class="sidebar-storage" id="storage-widget">
+            <div class="storage-info">
+                <span>Storage</span>
+                <span id="storage-text">Loading...</span>
+            </div>
+            <div class="storage-bar">
+                <div class="storage-fill" id="storage-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+        
+<div class="sidebar-profile" id="profile-trigger">
+            <div class="profile-avatar">S</div>
+            <div class="profile-info">
+                <div class="profile-name">Sarah Jenkins</div>
+                <div class="profile-email">sarah@company.com</div>
+            </div>
+            <i class="fa-solid fa-chevron-up profile-chevron"></i>
+            <div class="profile-dropdown" id="profile-dropdown">
+                <button id="switch-account-btn"><i class="fa-solid fa-rotate"></i> Switch Account</button>
+                <button id="add-account-btn"><i class="fa-solid fa-user-plus"></i> Add Account</button>
+                <div class="dropdown-divider"></div>
+                <a href="settings.html"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+                <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#"><i class="fa-solid fa-key"></i> Change Password</a>
+                <div class="dropdown-divider"></div>
+                <a href="login.html" class="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="settings-pane">
+
+        <div class="settings-header-container">
+            <div class="settings-header-top">
+                <h1>Settings</h1>
+                
+            </div>
+            <div class="settings-tabs">
+                <button class="tab-btn active" onclick="switchTab('general', this)">General</button>
+                <button class="tab-btn" onclick="switchTab('signature', this)">Signature</button>
+                <button class="tab-btn" onclick="switchTab('security', this)">Security & Sessions</button>
+                <button class="tab-btn" onclick="switchTab('mail', this)">Mail & Servers</button>
+                <button class="tab-btn" onclick="switchTab('compliance', this)">Compliance</button>
+                <button class="tab-btn" onclick="switchTab('filters', this)">Filters & Blocking</button>
+                <button class="tab-btn" onclick="switchTab('forwarding', this)">Forwarding & POP/IMAP</button>
+            </div>
+        </div>
+
+
+
+        <div class="settings-content">
+            <div class="tab-panel active" id="tab-general">
+                <!-- Appearance -->
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-palette"></i> Appearance</h2>
+                    <div class="form-group">
+                        <label>Interface Theme</label>
+                        <div class="theme-selector">
+                            <div class="theme-option" id="theme-dark-opt" onclick="ThemeManager.setTheme('dark'); updateThemeUI('dark');">
+                                <i class="fa-solid fa-moon"></i>
+                                <div style="font-weight:600;font-size:.9rem;">Midnight Obsidian</div>
+                                <div style="font-size:.75rem;color:var(--text-muted);margin-top:4px;">Dark mode</div>
+                            </div>
+                            <div class="theme-option" id="theme-light-opt" onclick="ThemeManager.setTheme('light'); updateThemeUI('light');">
+                                <i class="fa-solid fa-sun"></i>
+                                <div style="font-weight:600;font-size:.9rem;">Alpine Stark</div>
+                                <div style="font-size:.75rem;color:var(--text-muted);margin-top:4px;">Light mode</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile & Identity -->
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-address-card"></i> Profile & Identity</h2>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 250px;">
+                            <label>Display Name</label>
+                            <input type="text" class="form-control" value="Sarah Jenkins" id="settings-name">
+                        </div>
+                        <div class="form-group" style="flex: 1; min-width: 250px;">
+                            <label>Email Address</label>
+                            <input type="email" class="form-control" value="sarah@company.com" id="settings-email" readonly style="opacity:0.7">
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="saveProfile()"><i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i> Save Identity</button>
+                </div>
+
+                <div class="settings-section" style="border-color: rgba(239,68,68,0.3);">
+                    <h2 style="color: var(--brand-danger);"><i class="fa-solid fa-shield-halved"></i> Danger Zone</h2>
+                    <p style="font-size: .85rem; color: var(--text-secondary); margin-bottom: 20px;">Permanently delete this account and all associated data. This action cannot be undone and will break enterprise compliance holds.</p>
+                    <button class="btn-primary" style="background: rgba(239,68,68,0.1); color: var(--brand-danger); box-shadow: none;" onclick="alert('Operation blocked by Enterprise Legal Hold Policy.')">Delete Account</button>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tab-security">
+                <!-- Security & Encryption -->
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-lock"></i> Security & Encryption</h2>
+                    <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <div style="font-weight: 600; font-size: .95rem; color: var(--text-primary);">Two-Factor Authentication (2FA)</div>
+                            <div style="font-size: .8rem; color: var(--text-muted); margin-top: 4px;">Require hardware key or authenticator app on sign-in.</div>
+                        </div>
+                        <button class="btn-primary" style="background: var(--brand-success); padding: 8px 16px; box-shadow: none;">Enabled <i class="fa-solid fa-check"></i></button>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <div style="font-weight: 600; font-size: .95rem; color: var(--text-primary);">S/MIME End-to-End Encryption</div>
+                            <div style="font-size: .8rem; color: var(--text-muted); margin-top: 4px;">Sign and encrypt outbound mail automatically.</div>
+                        </div>
+                        <button class="btn-primary" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 16px; box-shadow: none;">Manage Keys</button>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <div style="font-weight: 600; font-size: .95rem; color: var(--text-primary);">Hardware Security Key (FIDO2)</div>
+                            <div style="font-size: .8rem; color: var(--text-muted); margin-top: 4px;">YubiKey 5 NFC registered on Oct 12, 2026.</div>
+                        </div>
+                        <button class="btn-primary" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 16px; box-shadow: none;">Add Key</button>
+                    </div>
+                </div>
+
+                <!-- Active Sessions -->
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-laptop-code"></i> Active Sessions</h2>
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+                        <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fa-brands fa-linux" style="font-size: 1.5rem; color: var(--text-secondary);"></i>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary); font-size: .9rem;">Linux OS (Web) <span style="background: var(--brand-success); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: .65rem; margin-left: 6px;">Current</span></div>
+                                    <div style="font-size: .75rem; color: var(--text-muted); margin-top: 2px;">Seattle, WA, USA • IP: 192.168.1.42</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fa-brands fa-apple" style="font-size: 1.5rem; color: var(--text-secondary);"></i>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary); font-size: .9rem;">iOS App (iPhone 14)</div>
+                                    <div style="font-size: .75rem; color: var(--text-muted); margin-top: 2px;">Portland, OR, USA • Last active 2 hours ago</div>
+                                </div>
+                            </div>
+                            <button class="btn-primary" style="background: transparent; border: 1px solid var(--border-color); color: var(--brand-danger); padding: 6px 12px; font-size: .8rem; box-shadow: none;">Revoke</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tab-mail">
+                <!-- Server Connection Configuration -->
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-server"></i> Mail Server Configuration</h2>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 250px; background: var(--bg-surface); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <h3 style="font-size: .9rem; margin-bottom: 16px; color: var(--text-primary);">Incoming (IMAP)</h3>
+                            <div class="form-group">
+                                <label>Hostname</label>
+                                <input type="text" class="form-control" value="imap.enterprise.company.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Port & Protocol</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" class="form-control" value="993" style="width: 80px;">
+                                    <select class="form-control" style="flex:1;">
+                                        <option>SSL/TLS (Strict)</option>
+                                        <option>STARTTLS</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="flex: 1; min-width: 250px; background: var(--bg-surface); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <h3 style="font-size: .9rem; margin-bottom: 16px; color: var(--text-primary);">Outgoing (SMTP)</h3>
+                            <div class="form-group">
+                                <label>Hostname</label>
+                                <input type="text" class="form-control" value="smtp.enterprise.company.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Port & Protocol</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" class="form-control" value="465" style="width: 80px;">
+                                    <select class="form-control" style="flex:1;">
+                                        <option>SSL/TLS (Strict)</option>
+                                        <option>STARTTLS</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn-primary" style="background: transparent; border: 1px solid var(--brand-action); color: var(--brand-action); box-shadow: none;">Test Connection</button>
+                        <button class="btn-primary" style="margin-left: 10px;">Save Configuration</button>
+                    </div>
+                </div>
+
+                <!-- Out of Office Auto-Responder -->
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-plane"></i> Out of Office Auto-Responder</h2>
+                    <div class="form-group" style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+                        <input type="checkbox" id="ooo-toggle" style="width: 18px; height: 18px; accent-color: var(--brand-action);">
+                        <label for="ooo-toggle" style="margin: 0; font-size: .95rem; color: var(--text-primary); cursor: pointer;">Enable Auto-Responder</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Message Content</label>
+                        <textarea class="form-control" rows="3" style="resize:vertical;" placeholder="I am currently away from the office..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 200px;">
+                            <label>Start Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="form-group" style="flex: 1; min-width: 200px;">
+                            <label>End Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="padding: 8px 16px;">Save Rule</button>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tab-compliance">
+                <!-- Compliance & Retention -->
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-scale-balanced"></i> Data Compliance & Retention</h2>
+                    <div class="form-group">
+                        <label>Archival Policy</label>
+                        <select class="form-control" style="max-width: 100%;">
+                            <option>Strict: Retain all emails for 7 years (Legal Hold)</option>
+                            <option>Standard: Auto-archive after 12 months</option>
+                            <option>Ephemeral: Auto-delete after 30 days</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Sovereignty Region</label>
+                        <select class="form-control" style="max-width: 100%;">
+                            <option>US-East (Virginia) - FedRAMP High</option>
+                            <option>EU-Central (Frankfurt) - GDPR Compliant</option>
+                            <option>AP-Northeast (Tokyo)</option>
+                        </select>
+                        <div style="font-size: .8rem; color: var(--text-muted); margin-top: 8px;"><i class="fa-solid fa-circle-info"></i> Changing regions will trigger a zero-downtime mailbox migration.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tab-signature">
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-pen-nib"></i> Signature Designer</h2>
+                    <p style="font-size: .85rem; color: var(--text-secondary); margin-bottom: 20px;">Design your rich-text email signature. This will be automatically appended to all outgoing emails.</p>
+                    
+                    <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-canvas);">
+                        <div style="padding: 8px; border-bottom: 1px solid var(--border-color); background: var(--bg-surface); display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button type="button" class="tb-btn" onclick="document.execCommand('bold', false, null)" style="background: var(--bg-canvas); border: 1px solid var(--border-color); cursor: pointer; padding: 6px 12px; border-radius: 4px; color: var(--text-primary); transition: var(--transition);"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" class="tb-btn" onclick="document.execCommand('italic', false, null)" style="background: var(--bg-canvas); border: 1px solid var(--border-color); cursor: pointer; padding: 6px 12px; border-radius: 4px; color: var(--text-primary); transition: var(--transition);"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" class="tb-btn" onclick="document.execCommand('underline', false, null)" style="background: var(--bg-canvas); border: 1px solid var(--border-color); cursor: pointer; padding: 6px 12px; border-radius: 4px; color: var(--text-primary); transition: var(--transition);"><i class="fa-solid fa-underline"></i></button>
+                            <div style="width: 1px; background: var(--border-color); margin: 0 4px;"></div>
+                            <button type="button" class="tb-btn" onclick="const url = prompt('Enter URL:'); if(url) document.execCommand('createLink', false, url);" style="background: var(--bg-canvas); border: 1px solid var(--border-color); cursor: pointer; padding: 6px 12px; border-radius: 4px; color: var(--text-primary);"><i class="fa-solid fa-link"></i></button>
+                            <button type="button" class="tb-btn" onclick="const img = prompt('Enter Image URL:'); if(img) document.execCommand('insertImage', false, img);" style="background: var(--bg-canvas); border: 1px solid var(--border-color); cursor: pointer; padding: 6px 12px; border-radius: 4px; color: var(--text-primary);"><i class="fa-solid fa-image"></i></button>
+                            <button type="button" class="tb-btn" onclick="document.execCommand('removeFormat', false, null)" style="background: var(--bg-canvas); border: 1px solid var(--border-color); cursor: pointer; padding: 6px 12px; border-radius: 4px; color: var(--text-primary); margin-left: auto;"><i class="fa-solid fa-eraser"></i></button>
+                        </div>
+                        <div id="signature-editor" contenteditable="true" style="padding: 20px; min-height: 200px; outline: none; font-family: Inter, sans-serif; font-size: .95rem; color: var(--text-primary); line-height: 1.6;">
+                            -- <br>
+                            <b>Sarah Jenkins</b><br>
+                            Director of Operations<br>
+                            <span style="color: var(--brand-action);">Company Enterprise Solutions</span><br>
+                            <i>Confidentiality Notice: This email is encrypted.</i>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn-primary" onclick="const btn = this; btn.innerHTML = '<i class=\'fa-solid fa-check\'></i> Saved!'; setTimeout(() => btn.innerHTML = '<i class=\'fa-solid fa-floppy-disk\' style=\'margin-right:8px;\'></i> Save Signature', 2000);"><i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i> Save Signature</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tab-filters">
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-filter"></i> Filters & Rules</h2>
+                    <p style="font-size: .85rem; color: var(--text-secondary); margin-bottom: 20px;">Automatically process incoming mail using advanced rules.</p>
+                    
+                    <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-surface);">
+                        <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; font-size: .95rem; color: var(--text-primary);">Move Newsletters to Updates</div>
+                                <div style="font-size: .8rem; color: var(--text-muted); margin-top: 4px;">Matches: from:(*@newsletter.com) OR subject:(unsubscribe)</div>
+                            </div>
+                            <button class="btn-primary" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 12px; box-shadow: none;">Edit</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn-primary"><i class="fa-solid fa-plus" style="margin-right:8px;"></i> Create New Filter</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-ban"></i> Blocked Addresses</h2>
+                    <p style="font-size: .85rem; color: var(--text-secondary); margin-bottom: 20px;">Messages from blocked addresses will bypass your Inbox and go directly to Spam.</p>
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <input type="email" class="form-control" placeholder="user@annoying.com" style="flex: 1;">
+                        <button class="btn-primary" style="background: var(--brand-danger);">Block</button>
+                    </div>
+                    <div style="background: var(--bg-canvas); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: .85rem; color: var(--text-secondary);">
+                        spammer@phishing-test.com <button style="float:right; background:none; border:none; color:var(--text-muted); cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tab-forwarding">
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-share"></i> Email Forwarding</h2>
+                    <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <div style="font-weight: 600; font-size: .95rem; color: var(--text-primary);">Forward incoming mail to</div>
+                            <div style="font-size: .8rem; color: var(--text-muted); margin-top: 4px;">No forwarding addresses set up.</div>
+                        </div>
+                        <button class="btn-primary" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 16px; box-shadow: none;">Add Forwarding Address</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h2><i class="fa-solid fa-download"></i> POP / IMAP Access</h2>
+                    <p style="font-size: .85rem; color: var(--text-secondary); margin-bottom: 20px;">Access your mail using desktop or mobile clients like Outlook, Thunderbird, or Apple Mail.</p>
+                    
+                    <div class="form-group">
+                        <label>IMAP Access</label>
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <label style="margin: 0; display: flex; align-items: center; gap: 6px; font-weight: normal;"><input type="radio" name="imap" checked> Enable IMAP</label>
+                            <label style="margin: 0; display: flex; align-items: center; gap: 6px; font-weight: normal;"><input type="radio" name="imap"> Disable IMAP</label>
+                        </div>
+                        <div style="font-size: .8rem; color: var(--text-muted); margin-top: 8px;">Status: IMAP is enabled.</div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                        <label>POP Access</label>
+                        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                            <label style="margin: 0; display: flex; align-items: center; gap: 6px; font-weight: normal;"><input type="radio" name="pop"> Enable POP for all mail</label>
+                            <label style="margin: 0; display: flex; align-items: center; gap: 6px; font-weight: normal;"><input type="radio" name="pop"> Enable for new mail</label>
+                            <label style="margin: 0; display: flex; align-items: center; gap: 6px; font-weight: normal;"><input type="radio" name="pop" checked> Disable POP</label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary" style="margin-top: 12px;">Save Configuration</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Account Switcher Modal -->
+<div class="account-modal" id="account-switcher-modal">
+    <div class="account-modal-backdrop"></div>
+    <div class="account-panel">
+        <div class="account-panel-header">
+            Accounts
+            <button class="account-panel-close" onclick="AccountManager.closeAccountModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="account-list" id="account-list"></div>
+        <div class="account-panel-actions">
+            <button class="account-panel-btn add-btn" onclick="AccountManager.addAccount()">
+                <i class="fa-solid fa-plus"></i> Add Another Account
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Account Modal -->
+<div class="modal-backdrop" id="add-account-modal">
+    <div class="compose-modal" style="max-width:420px;">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-user-plus" style="color:var(--brand-action);margin-right:8px;"></i>Add Account</h3>
+            <button class="close-btn" onclick="document.getElementById('add-account-modal').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="compose-body">
+            <div class="compose-form-group">
+                <label>Name</label>
+                <input type="text" id="new-acc-name" placeholder="Full Name">
+            </div>
+            <div class="compose-form-group">
+                <label>Email</label>
+                <input type="email" id="new-acc-email" placeholder="you@example.com">
+            </div>
+            <div class="compose-form-group">
+                <label>IMAP</label>
+                <input type="text" id="new-acc-server" placeholder="imap.example.com">
+            </div>
+        </div>
+        <div class="modal-footer" style="justify-content:flex-end;gap:10px;">
+            <button class="action-btn" onclick="document.getElementById('add-account-modal').classList.remove('open')">Cancel</button>
+            <button class="btn-send" onclick="AccountManager.saveNewAccount()"><i class="fa-solid fa-plus"></i> Add Account</button>
+        </div>
+    </div>
+</div>
+
+<script src="ui-logic.js"></script>
+<script>
+    function updateThemeUI(theme) {
+        document.getElementById('theme-dark-opt').classList.toggle('selected', theme === 'dark');
+        document.getElementById('theme-light-opt').classList.toggle('selected', theme === 'light');
+    }
+    
+    // Set initial theme selection
+    setTimeout(() => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        updateThemeUI(currentTheme);
+    }, 100);
+
+    function saveProfile() {
+        const name = document.getElementById('settings-name').value;
+        alert(`Profile saved for ${name}!`);
+    }
+
+    function switchTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+        
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script src="api-client.js"></script>
+</body>
+</html>

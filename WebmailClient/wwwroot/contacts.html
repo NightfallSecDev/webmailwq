@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LETTERDUCK - Contacts</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .action-btn-sm {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .action-btn-sm:hover {
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand"><img src="logo.png" class="brand-logo" alt="Logo"> <span class="brand-text">LETTERDUCK</span></div>
+                <div class="header-actions" style="display:flex;gap:6px;align-items:center;">
+                    <button class="sidebar-toggle-btn" id="sidebar-toggle" title="Toggle Sidebar">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button class="compose-btn" id="new-contact-btn">
+                <i class="fa-solid fa-user-plus"></i> New Contact
+            </button>
+            
+            <ul class="nav-list">
+                <a href="index.html" class="nav-item">
+                    <i class="fa-solid fa-inbox icon"></i> Inbox
+                    <span class="badge">12</span>
+                </a>
+                <a href="sent.html" class="nav-item">
+                    <i class="fa-regular fa-paper-plane icon"></i> Sent
+                </a>
+                <a href="scheduled.html" class="nav-item">
+                    <i class="fa-regular fa-clock icon"></i> Scheduled
+                </a>
+                <a href="drafts.html" class="nav-item">
+                    <i class="fa-solid fa-file-lines icon"></i> Drafts
+                </a>
+                <a href="starred.html" class="nav-item">
+                    <i class="fa-regular fa-star icon"></i> Starred
+                </a>
+                <a href="spam.html" class="nav-item">
+                    <i class="fa-solid fa-ban icon"></i> Spam
+                </a>
+                <a href="trash.html" class="nav-item">
+                    <i class="fa-solid fa-trash icon"></i> Trash
+                </a>
+                <a href="contacts.html" class="nav-item active">
+                    <i class="fa-solid fa-address-book icon"></i> Contacts
+                </a>
+                <a href="logs.html" class="nav-item">
+                    <i class="fa-solid fa-clipboard-list icon"></i> Audit Logs
+                </a>
+            </ul>
+
+        <!-- Clock -->
+        <div class="sidebar-clock">
+            <div class="clock-time" id="sidebar-time">--:--:-- --</div>
+            <div class="clock-date" id="sidebar-date">Loading...</div>
+        </div>
+
+        <!-- Profile -->
+                <!-- Storage -->
+        <div class="sidebar-storage" id="storage-widget">
+            <div class="storage-info">
+                <span>Storage</span>
+                <span id="storage-text">Loading...</span>
+            </div>
+            <div class="storage-bar">
+                <div class="storage-fill" id="storage-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+        
+<div class="sidebar-profile" id="profile-trigger">
+            <div class="profile-avatar">S</div>
+            <div class="profile-info">
+                <div class="profile-name">Sarah Jenkins</div>
+                <div class="profile-email">sarah.jenkins@company.com</div>
+            </div>
+            <i class="fa-solid fa-chevron-up profile-chevron"></i>
+
+            <div class="profile-dropdown" id="profile-dropdown">
+                <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="settings.html"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+                <a href="#"><i class="fa-solid fa-key"></i> Change Password</a>
+                <div class="dropdown-divider"></div>
+                <a href="login.html" class="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+            </div>
+        </div>
+        </aside>
+
+        <!-- Contacts List Pane -->
+        <section class="mail-list-pane">
+            <div class="list-header">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h2 style="margin: 0;">Address Book</h2>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="action-btn-sm" id="import-btn" title="Import CSV"><i class="fa-solid fa-file-import"></i></button>
+                        <button class="action-btn-sm" id="export-btn" title="Export CSV"><i class="fa-solid fa-file-export"></i></button>
+                    </div>
+                </div>
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-secondary)"></i>
+                    <input type="text" placeholder="Search contacts...">
+                </div>
+            </div>
+            <div class="mail-list" id="contact-list">
+                <div class="mail-item active" style="display: flex; align-items: center; gap: 16px;">
+                    <div class="avatar" style="width: 48px; height: 48px; flex-shrink: 0;">J</div>
+                    <div>
+                        <div class="sender">James Carter</div>
+                        <div class="subject">james.carter@example.com</div>
+                    </div>
+                </div>
+                <div class="mail-item" style="display: flex; align-items: center; gap: 16px;">
+                    <div class="avatar" style="width: 48px; height: 48px; flex-shrink: 0; background: #10B981;">A</div>
+                    <div>
+                        <div class="sender">Alex Rivera</div>
+                        <div class="subject">arivera@designstudio.io</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact View Pane -->
+        <main class="mail-view-pane" style="align-items: center; padding-top: 60px; position: relative;">
+            <div style="width: 100%; max-width: 500px; padding: 40px; background: var(--bg-canvas); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: var(--shadow-sm); text-align: center;">
+                <div class="avatar" style="width: 96px; height: 96px; font-size: 2.5rem; margin: 0 auto 24px auto; box-shadow: var(--shadow-md);">J</div>
+                <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 8px;">James Carter</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 24px;">Lead Engineering Architect</p>
+                
+                <div style="text-align: left; margin-bottom: 32px;">
+                    <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+                        <strong style="color: var(--text-secondary);">Email</strong>
+                        <span>james.carter@example.com</span>
+                    </div>
+                    <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+                        <strong style="color: var(--text-secondary);">Phone</strong>
+                        <span>+1 (555) 123-4567</span>
+                    </div>
+                    <div style="padding: 16px; display: flex; justify-content: space-between;">
+                        <strong style="color: var(--text-secondary);">Company</strong>
+                        <span>TechFlow Enterprise</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 16px; justify-content: center;">
+                    <button class="compose-btn" style="margin: 0;" id="email-contact-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Email
+                    </button>
+                    <button class="action-btn" id="edit-contact-btn"><i class="fa-solid fa-pen"></i> Edit</button>
+                    <button class="action-btn" style="color: #ef4444;" id="delete-contact-btn"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Theme" style="position: absolute; top: 24px; right: 24px;">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </main>
+    </div>
+
+    <!-- Hidden file input for CSV Import -->
+    <input type="file" id="csv-upload" accept=".csv" style="display: none;">
+
+    <!-- Contact Form Modal (Add/Edit) -->
+    <div class="modal-backdrop" id="contact-modal">
+        <div class="compose-modal contact-modal-inner" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 id="contact-modal-title">New Contact</h3>
+                <button class="close-btn" id="close-contact-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="compose-body">
+                <div class="compose-form-group">
+                    <label style="width: 80px;">Name:</label>
+                    <input type="text" id="contact-name" placeholder="Full Name">
+                </div>
+                <div class="compose-form-group">
+                    <label style="width: 80px;">Email:</label>
+                    <input type="email" id="contact-email" placeholder="email@example.com">
+                </div>
+                <div class="compose-form-group">
+                    <label style="width: 80px;">Phone:</label>
+                    <input type="tel" id="contact-phone" placeholder="+1 (555) 000-0000">
+                </div>
+                <div class="compose-form-group" style="border-bottom: none;">
+                    <label style="width: 80px;">Company:</label>
+                    <input type="text" id="contact-company" placeholder="Company Name">
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end;">
+                <button class="btn-send" id="save-contact-btn">Save Contact</button>
+            </div>
+        </div>
+    </div>
+
+    
+<!-- Account Switcher Modal -->
+<div class="account-modal" id="account-switcher-modal">
+    <div class="account-modal-backdrop"></div>
+    <div class="account-panel">
+        <div class="account-panel-header">
+            Accounts
+            <button class="account-panel-close" onclick="AccountManager.closeAccountModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="account-list" id="account-list"></div>
+        <div class="account-panel-actions">
+            <button class="account-panel-btn add-btn" onclick="AccountManager.addAccount()">
+                <i class="fa-solid fa-plus"></i> Add Another Account
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Account Modal -->
+<div class="modal-backdrop" id="add-account-modal">
+    <div class="compose-modal" style="max-width:420px;">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-user-plus" style="color:var(--brand-action);margin-right:8px;"></i>Add Account</h3>
+            <button class="close-btn" onclick="document.getElementById('add-account-modal').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="compose-body">
+            <div class="compose-form-group">
+                <label>Name</label>
+                <input type="text" id="new-acc-name" placeholder="Full Name">
+            </div>
+            <div class="compose-form-group">
+                <label>Email</label>
+                <input type="email" id="new-acc-email" placeholder="you@example.com">
+            </div>
+            <div class="compose-form-group">
+                <label>IMAP</label>
+                <input type="text" id="new-acc-server" placeholder="imap.example.com">
+            </div>
+        </div>
+        <div class="modal-footer" style="justify-content:flex-end;gap:10px;">
+            <button class="action-btn" onclick="document.getElementById('add-account-modal').classList.remove('open')">Cancel</button>
+            <button class="btn-send" onclick="AccountManager.saveNewAccount()"><i class="fa-solid fa-plus"></i> Add Account</button>
+        </div>
+    </div>
+</div>
+
+<script src="ui-logic.js"></script>
+    <script>
+        // --- Add/Edit Contact Modal Logic ---
+        const newContactBtn = document.getElementById('new-contact-btn');
+        const editContactBtn = document.getElementById('edit-contact-btn');
+        const contactModal = document.getElementById('contact-modal');
+        const closeContactModal = document.getElementById('close-contact-modal');
+        const saveContactBtn = document.getElementById('save-contact-btn');
+        
+        const contactTitle = document.getElementById('contact-modal-title');
+        const inputName = document.getElementById('contact-name');
+        const inputEmail = document.getElementById('contact-email');
+        const inputPhone = document.getElementById('contact-phone');
+        const inputCompany = document.getElementById('contact-company');
+
+        newContactBtn.addEventListener('click', () => {
+            contactTitle.innerText = "New Contact";
+            inputName.value = "";
+            inputEmail.value = "";
+            inputPhone.value = "";
+            inputCompany.value = "";
+            contactModal.classList.add('open');
+        });
+
+        editContactBtn.addEventListener('click', () => {
+            contactTitle.innerText = "Edit Contact";
+            inputName.value = "James Carter";
+            inputEmail.value = "james.carter@example.com";
+            inputPhone.value = "+1 (555) 123-4567";
+            inputCompany.value = "TechFlow Enterprise";
+            contactModal.classList.add('open');
+        });
+
+        closeContactModal.addEventListener('click', () => {
+            contactModal.classList.remove('open');
+        });
+
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) {
+                contactModal.classList.remove('open');
+            }
+        });
+
+        saveContactBtn.addEventListener('click', () => {
+            alert(`Contact ${inputName.value} saved successfully!`);
+            contactModal.classList.remove('open');
+        });
+
+        // --- Delete Contact Logic ---
+        const deleteContactBtn = document.getElementById('delete-contact-btn');
+        deleteContactBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to permanently delete this contact?")) {
+                alert("Contact deleted successfully.");
+                // Dummy logic to remove the active item visually
+                const activeItem = document.querySelector('.mail-item.active');
+                if(activeItem) activeItem.style.display = 'none';
+            }
+        });
+
+        // --- Import / Export CSV Logic ---
+        const exportBtn = document.getElementById('export-btn');
+        const importBtn = document.getElementById('import-btn');
+        const csvUpload = document.getElementById('csv-upload');
+
+        exportBtn.addEventListener('click', () => {
+            // Generate dummy CSV content
+            const csvContent = "data:text/csv;charset=utf-8,Name,Email,Phone,Company\nJames Carter,james.carter@example.com,+1 (555) 123-4567,TechFlow Enterprise\nAlex Rivera,arivera@designstudio.io,,";
+            
+            // Create hidden link and trigger download
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "webmail_contacts_export.csv");
+            document.body.appendChild(link); // Required for FF
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        importBtn.addEventListener('click', () => {
+            csvUpload.click(); // Trigger the hidden file input
+        });
+
+        csvUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.name.endsWith('.csv')) {
+                    alert(`Successfully parsed ${file.name}. Importing 42 new contacts...`);
+                } else {
+                    alert("Please upload a valid .csv file.");
+                }
+            }
+        });
+
+        // --- Email Contact Logic ---
+        const emailContactBtn = document.getElementById('email-contact-btn');
+        if (emailContactBtn) {
+            emailContactBtn.addEventListener('click', () => {
+                window.location.href = 'compose.html';
+            });
+        }
+    </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script src="api-client.js"></script>
+</body>
+</html>
