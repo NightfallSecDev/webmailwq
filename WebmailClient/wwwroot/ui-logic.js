@@ -57,6 +57,17 @@ document.addEventListener('keydown', e => {
     }
 });
 
+// --- Global Toast Notification ---
+window.showToast = function(message, type = 'success') {
+    const banner = document.createElement('div');
+    const color = type === 'success' ? '#10B981' : (type === 'error' ? '#EF4444' : 'var(--brand-action)');
+    const icon = type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-triangle-exclamation' : 'fa-info-circle');
+    banner.style.cssText = `position:fixed;top:16px;left:50%;transform:translateX(-50%);background:${color};color:#fff;padding:10px 22px;border-radius:999px;font-size:.84rem;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:fadeIn .2s ease`;
+    banner.innerHTML = `<i class="fa-solid ${icon}"></i> ${message}`;
+    document.body.appendChild(banner);
+    setTimeout(() => { banner.style.opacity = '0'; banner.style.transition = 'opacity 0.2s'; setTimeout(() => banner.remove(), 200); }, 2500);
+};
+
 // --- Compose Button ---
 const composeBtn = document.getElementById('compose-btn');
 const composeModal = document.getElementById('compose-modal');
@@ -214,11 +225,7 @@ const AccountManager = (() => {
         renderPanel();
         closeAccountModal();
         // brief flash to confirm switch
-        const banner = document.createElement('div');
-        banner.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--brand-action);color:#fff;padding:10px 22px;border-radius:999px;font-size:.84rem;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(99,102,241,.5);animation:bannerIn .2s ease';
-        banner.innerHTML = '<i class="fa-solid fa-rotate"></i> Account switched';
-        document.body.appendChild(banner);
-        setTimeout(() => banner.remove(), 2200);
+        window.showToast('Account switched', 'info');
     }
 
     function addAccount() {

@@ -633,10 +633,10 @@ document.getElementById('send-btn').addEventListener('click', async () => {
     if (!to) { document.getElementById('field-to').focus(); return; }
     
     let body = '';
-    if (document.getElementById('composer-designer').classList.contains('active')) {
-        body = document.getElementById('preview-frame').srcdoc;
+    if (document.getElementById('code-container').classList.contains('visible')) {
+        body = document.getElementById('code-editor').value;
     } else {
-        body = document.getElementById('rich-text-editor').innerHTML;
+        body = document.getElementById('rich-editor').innerHTML;
     }
 
     const btn = document.getElementById('send-btn');
@@ -650,10 +650,11 @@ document.getElementById('send-btn').addEventListener('click', async () => {
     if (success) {
         btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Sent!';
         btn.style.background = 'linear-gradient(135deg,#10B981,#34D399)';
-        setTimeout(() => window.location.href = 'index.html', 1500);
+        window.showToast('Email sent successfully!', 'success');
+        setTimeout(() => window.location.href = 'sent.html', 1500);
     } else {
         btn.innerHTML = originalText;
-        alert('Failed to send email. Please check the backend connection.');
+        window.showToast('Failed to send email. Check backend.', 'error');
     }
 });
 

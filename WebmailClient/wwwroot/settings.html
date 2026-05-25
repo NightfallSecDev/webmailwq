@@ -507,7 +507,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px;">
-                        <button class="btn-primary" onclick="const btn = this; btn.innerHTML = '<i class=\'fa-solid fa-check\'></i> Saved!'; setTimeout(() => btn.innerHTML = '<i class=\'fa-solid fa-floppy-disk\' style=\'margin-right:8px;\'></i> Save Signature', 2000);"><i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i> Save Signature</button>
+                        <button class="btn-primary" onclick="window.showToast('Signature saved successfully!', 'success')"><i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i> Save Signature</button>
                     </div>
                 </div>
             </div>
@@ -645,7 +645,7 @@
 
     function saveProfile() {
         const name = document.getElementById('settings-name').value;
-        alert(`Profile saved for ${name}!`);
+        window.showToast(`Profile identity saved for ${name}!`, 'success');
     }
 
     function switchTab(tabId, btnElement) {
