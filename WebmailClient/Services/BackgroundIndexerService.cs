@@ -63,7 +63,7 @@ namespace WebmailClient.Services
             if (string.IsNullOrWhiteSpace(queryText)) return results;
 
             using var reader = DirectoryReader.Open(_dir);
-            var searcher = new Lucene.Net.Search.IndexSearcher(reader);
+            var searcher = new IndexSearcher(reader);
             
             // Build boolean query for accountId AND (Subject OR Body OR From)
             var analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
@@ -74,7 +74,7 @@ namespace WebmailClient.Services
                 
             var textQuery = parser.Parse(queryText);
             
-            var accountQuery = new Lucene.Net.Search.TermQuery(new Term("AccountId", accountId.ToString()));
+            var accountQuery = new TermQuery(new Term("AccountId", accountId.ToString()));
             
             var boolQuery = new Lucene.Net.Search.BooleanQuery
             {
