@@ -211,6 +211,11 @@
     </div>
 
     <script>
+        // Clear existing session on load (Sign Out)
+        localStorage.removeItem('accountId');
+        localStorage.removeItem('wm-accounts');
+        localStorage.removeItem('wm-active-account');
+
         const themeToggle = document.getElementById('theme-toggle');
         const htmlElement = document.documentElement;
         

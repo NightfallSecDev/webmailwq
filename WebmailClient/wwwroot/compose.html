@@ -360,7 +360,7 @@
     <div class="compose-fields">
         <div class="field-row">
             <span class="field-label">From</span>
-            <input class="field-input" type="text" value="sarah.jenkins@company.com" readonly style="opacity:.7;">
+            <input class="field-input" id="compose-from" type="text" value="" readonly style="opacity:.7;">
         </div>
         <div class="field-row">
             <span class="field-label">To</span>
@@ -665,6 +665,14 @@ function formatCode() {
 
 // ── Set initial save time ──────────────────────────
 document.getElementById('save-time').textContent = '';
+
+// Load real user data
+document.addEventListener('DOMContentLoaded', () => {
+    const accs = JSON.parse(localStorage.getItem('wm-accounts')) || [];
+    if (accs.length > 0) {
+        document.getElementById('compose-from').value = accs[0].email || '';
+    }
+});
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 <script src="api-client.js"></script>

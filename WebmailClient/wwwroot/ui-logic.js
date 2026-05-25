@@ -2,6 +2,11 @@
 // LETTERDUCK — GLOBAL UI LOGIC
 // ============================================
 
+// --- Auth Check ---
+if (!window.location.pathname.endsWith('login.html') && !localStorage.getItem('accountId')) {
+    window.location.replace('login.html');
+}
+
 // --- Theme Manager ---
 const ThemeManager = (() => {
     const key = 'wm-theme';

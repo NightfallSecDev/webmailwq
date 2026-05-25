@@ -40,7 +40,18 @@ namespace WebmailClient.Services
             var client = await _pool.GetClientAsync(account.ImapServer, account.ImapPort, account.EmailAddress, account.EncryptedPassword, cancellationToken);
             try
             {
-                var folder = await client.GetFolderAsync(folderName, cancellationToken);
+                IMailFolder folder;
+                try {
+                    if (folderName.Equals("inbox", StringComparison.OrdinalIgnoreCase)) folder = client.Inbox;
+                    else if (folderName.Equals("sent", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Sent) ?? await client.GetFolderAsync("Sent", cancellationToken);
+                    else if (folderName.Equals("drafts", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Drafts) ?? await client.GetFolderAsync("Drafts", cancellationToken);
+                    else if (folderName.Equals("spam", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Junk) ?? await client.GetFolderAsync("Junk", cancellationToken);
+                    else if (folderName.Equals("trash", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Trash) ?? await client.GetFolderAsync("Trash", cancellationToken);
+                    else folder = await client.GetFolderAsync(folderName, cancellationToken);
+                } catch (FolderNotFoundException) {
+                    yield break;
+                }
+
                 await folder.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
 
                 int totalCount = folder.Count;
@@ -80,7 +91,18 @@ namespace WebmailClient.Services
             var client = await _pool.GetClientAsync(account.ImapServer, account.ImapPort, account.EmailAddress, account.EncryptedPassword, cancellationToken);
             try
             {
-                var folder = await client.GetFolderAsync(folderName, cancellationToken);
+                IMailFolder folder;
+                try {
+                    if (folderName.Equals("inbox", StringComparison.OrdinalIgnoreCase)) folder = client.Inbox;
+                    else if (folderName.Equals("sent", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Sent) ?? await client.GetFolderAsync("Sent", cancellationToken);
+                    else if (folderName.Equals("drafts", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Drafts) ?? await client.GetFolderAsync("Drafts", cancellationToken);
+                    else if (folderName.Equals("spam", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Junk) ?? await client.GetFolderAsync("Junk", cancellationToken);
+                    else if (folderName.Equals("trash", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Trash) ?? await client.GetFolderAsync("Trash", cancellationToken);
+                    else folder = await client.GetFolderAsync(folderName, cancellationToken);
+                } catch (FolderNotFoundException) {
+                    return string.Empty;
+                }
+
                 await folder.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
 
                 // For simplicity, we search by Message-Id header or UID if implemented that way.
