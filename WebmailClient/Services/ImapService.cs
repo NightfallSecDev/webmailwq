@@ -71,7 +71,7 @@ namespace WebmailClient.Services
                         var summary = summaries[i];
                         yield return new EmailMetadata
                         {
-                            MessageId = summary.Envelope?.MessageId ?? summary.UniqueId.Id.ToString(),
+                            MessageId = summary.UniqueId.Id.ToString(),
                             AccountId = account.Id,
                             Subject = summary.Envelope?.Subject ?? "(No Subject)",
                             From = summary.Envelope?.From.Count > 0 ? summary.Envelope.From[0].Name ?? summary.Envelope.From[0].ToString() : "Unknown",

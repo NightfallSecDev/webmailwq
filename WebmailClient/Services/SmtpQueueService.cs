@@ -55,10 +55,16 @@ namespace WebmailClient.Services
                         // Use async I/O
                         using var client = new SmtpClient();
                         var options = item.Account.SmtpPort == 25 ? SecureSocketOptions.None : SecureSocketOptions.Auto;
+                        // Allow self-signed certificates for local testing
+                        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
                         await client.ConnectAsync(item.Account.SmtpServer, item.Account.SmtpPort, options, stoppingToken);
                         
-                        // Postfix on localhost allows relaying from 127.0.0.1 without auth.
-                        // We cannot call AuthenticateAsync here because item.Account.EncryptedPassword is a BCrypt hash!
+                        // Use the same ID and password for the SMTP server as we do for IMAP
+                        if (client.Capabilities.HasFlag(MailKit.Net.Smtp.SmtpCapabilities.Authentication))
+                        {
+                            await client.AuthenticateAsync(item.Account.EmailAddress, item.Account.EncryptedPassword, stoppingToken);
+                        }
                         
                         await client.SendAsync(item.Message, stoppingToken);
                         await client.DisconnectAsync(true, stoppingToken);

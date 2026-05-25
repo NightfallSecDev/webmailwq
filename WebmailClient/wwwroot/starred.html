@@ -11,51 +11,38 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="brand"><img src="logo.png" class="brand-logo" alt="Logo"> <span class="brand-text">LETTERDUCK</span></div>
-        <button class="theme-toggle" title="Toggle theme"></button>
+            <button class="theme-toggle" title="Toggle theme"></button>
             <div class="header-actions" style="display:flex;gap:6px;align-items:center;">
-                <button class="sidebar-toggle-btn" id="sidebar-toggle" title="Toggle Sidebar">
-                    <i class="fa-solid fa-bars-staggered"></i>
-                </button>
-                
+                <button class="sidebar-toggle-btn" id="sidebar-toggle" title="Toggle Sidebar"><i class="fa-solid fa-bars-staggered"></i></button>
             </div>
         </div>
         <button class="compose-btn" id="compose-btn" onclick="window.location.href='compose.html'"><i class="fa-solid fa-pen-to-square"></i> Compose</button>
         <nav class="nav-list">
             <span class="nav-section-label">Mailboxes</span>
-            <a href="index.html"     class="nav-item"><i class="fa-solid fa-inbox icon"></i> Inbox <span class="badge">12</span></a>
-            <a href="sent.html"      class="nav-item"><i class="fa-regular fa-paper-plane icon"></i> Sent</a>
-            <a href="scheduled.html" class="nav-item"><i class="fa-regular fa-clock icon"></i> Scheduled</a>
+            <a href="index.html"     class="nav-item"><i class="fa-solid fa-inbox icon"></i> Inbox <span class="badge" id="inbox-badge"></span></a>
+            <a href="starred.html" class="nav-item active"><i class="fa-regular fa-paper-plane icon"></i> Sent</a>
             <a href="drafts.html"    class="nav-item"><i class="fa-solid fa-file-lines icon"></i> Drafts</a>
-            <a href="starred.html"   class="nav-item active"><i class="fa-regular fa-star icon"></i> Starred</a>
+            <a href="starred.html"   class="nav-item"><i class="fa-regular fa-star icon"></i> Starred</a>
             <a href="spam.html"      class="nav-item"><i class="fa-solid fa-ban icon"></i> Spam</a>
             <a href="trash.html"     class="nav-item"><i class="fa-solid fa-trash icon"></i> Trash</a>
             <div class="nav-divider"></div>
             <span class="nav-section-label">More</span>
             <a href="contacts.html"  class="nav-item"><i class="fa-solid fa-address-book icon"></i> Contacts</a>
-            <a href="logs.html"      class="nav-item"><i class="fa-solid fa-clipboard-list icon"></i> Audit Logs</a>
             <a href="settings.html"  class="nav-item"><i class="fa-solid fa-gear icon"></i> Settings</a>
             <a href="login.html"     class="nav-item" style="color:var(--brand-danger)"><i class="fa-solid fa-right-from-bracket icon"></i> Sign Out</a>
         </nav>
-
-        <!-- Live Clock -->
         <div class="sidebar-clock">
             <div class="clock-time" id="sidebar-time">--:--:-- --</div>
             <div class="clock-date" id="sidebar-date">Loading…</div>
         </div>
-
-        <!-- Profile -->
-                <!-- Storage -->
         <div class="sidebar-storage" id="storage-widget">
             <div class="storage-info">
                 <span>Storage</span>
                 <span id="storage-text">Loading...</span>
             </div>
-            <div class="storage-bar">
-                <div class="storage-fill" id="storage-fill" style="width: 0%;"></div>
-            </div>
+            <div class="storage-bar"><div class="storage-fill" id="storage-fill" style="width:0%"></div></div>
         </div>
-        
-<div class="sidebar-profile" id="profile-trigger">
+        <div class="sidebar-profile" id="profile-trigger">
             <div class="profile-avatar" id="profile-avatar">U</div>
             <div class="profile-info">
                 <div class="profile-name" id="profile-name">User</div>
@@ -68,53 +55,39 @@
                 <div class="dropdown-divider"></div>
                 <a href="settings.html"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
                 <a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
-                <a href="#"><i class="fa-solid fa-key"></i> Change Password</a>
                 <div class="dropdown-divider"></div>
                 <a href="login.html" class="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
             </div>
         </div>
     </aside>
+
     <section class="mail-list-pane">
         <div class="list-header">
             <h2>Starred</h2>
-            <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Search starred…"></div>
+            <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Search sent…"></div>
         </div>
-        <div class="mail-list">
-            <div class="mail-item active">
-                <div class="mail-header-info">
-                    <span class="sender"><i class="fa-solid fa-star" style="color:var(--brand-warning);margin-right:5px;font-size:.75rem;"></i>CEO Office</span>
-                    <span class="date">May 1</span>
-                </div>
-                <div class="subject">Annual Corporate Retreat 2026</div>
-                <div class="preview">I'm excited to announce the dates for this year's retreat…</div>
-            </div>
-        </div>
+        <div class="mail-list"><!-- loaded by api-client.js --></div>
     </section>
+
     <main class="mail-view-pane">
         <header class="view-header">
-            <div class="view-header-top">
-                <h1 class="view-subject"><i class="fa-solid fa-star" style="color:var(--brand-warning);margin-right:8px;"></i>Annual Corporate Retreat 2026</h1>
-                
-            </div>
-            <div class="view-meta">
+            <div class="view-header-top"><h1 class="view-subject">No Message Selected</h1></div>
+            <div class="view-meta" style="display:none;">
                 <div class="sender-profile">
-                    <div class="avatar">C</div>
-                    <div class="sender-details">
-                        <div class="name">CEO Office</div>
-                        <div class="email">ceo@company.com</div>
-                    </div>
+                    <div class="avatar"></div>
+                    <div class="sender-details"><div class="name"></div><div class="email"></div></div>
                 </div>
                 <div class="view-actions">
                     <button class="action-btn"><i class="fa-solid fa-reply"></i> Reply</button>
-                    <button class="action-btn" style="color:var(--brand-warning)"><i class="fa-solid fa-star"></i> Unstar</button>
+                    <button class="action-btn"><i class="fa-solid fa-share"></i> Forward</button>
                     <button class="action-btn danger"><i class="fa-solid fa-trash"></i></button>
                 </div>
             </div>
         </header>
         <div class="mail-body">
-            <p>Hello Team,</p>
-            <p>I'm excited to announce the dates for this year's company retreat: <strong>August 15–18, 2026</strong>. Please mark your calendars and prepare accordingly.</p>
-            <p>Best,<br>CEO</p>
+            <div style="padding:60px;text-align:center;color:var(--text-muted);">
+                <i class="fa-regular fa-paper-plane fa-3x" style="opacity:0.2;margin-bottom:16px;"></i><br>Select a sent message to view
+            </div>
         </div>
     </main>
 </div>
@@ -123,19 +96,13 @@
 <div class="account-modal" id="account-switcher-modal">
     <div class="account-modal-backdrop"></div>
     <div class="account-panel">
-        <div class="account-panel-header">
-            Accounts
-            <button class="account-panel-close" onclick="AccountManager.closeAccountModal()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
+        <div class="account-panel-header">Accounts<button class="account-panel-close" onclick="AccountManager.closeAccountModal()"><i class="fa-solid fa-xmark"></i></button></div>
         <div class="account-list" id="account-list"></div>
         <div class="account-panel-actions">
-            <button class="account-panel-btn add-btn" onclick="AccountManager.addAccount()">
-                <i class="fa-solid fa-plus"></i> Add Another Account
-            </button>
+            <button class="account-panel-btn add-btn" onclick="AccountManager.addAccount()"><i class="fa-solid fa-plus"></i> Add Another Account</button>
         </div>
     </div>
 </div>
-
 <!-- Add Account Modal -->
 <div class="modal-backdrop" id="add-account-modal">
     <div class="compose-modal" style="max-width:420px;">
@@ -144,18 +111,9 @@
             <button class="close-btn" onclick="document.getElementById('add-account-modal').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="compose-body">
-            <div class="compose-form-group">
-                <label>Name</label>
-                <input type="text" id="new-acc-name" placeholder="Full Name">
-            </div>
-            <div class="compose-form-group">
-                <label>Email</label>
-                <input type="email" id="new-acc-email" placeholder="you@example.com">
-            </div>
-            <div class="compose-form-group">
-                <label>IMAP</label>
-                <input type="text" id="new-acc-server" placeholder="imap.example.com">
-            </div>
+            <div class="compose-form-group"><label>Email</label><input type="email" id="new-acc-email" placeholder="you@example.com"></div>
+            <div class="compose-form-group"><label>Password</label><input type="password" id="new-acc-pass" placeholder="••••••••"></div>
+            <div class="compose-form-group"><label>IMAP Server</label><input type="text" id="new-acc-server" placeholder="localhost"></div>
         </div>
         <div class="modal-footer" style="justify-content:flex-end;gap:10px;">
             <button class="action-btn" onclick="document.getElementById('add-account-modal').classList.remove('open')">Cancel</button>

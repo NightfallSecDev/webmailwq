@@ -254,23 +254,20 @@
 
             const result = await API.login(email, password, imapServer, imapPort, smtpServer, smtpPort);
             if (result) {
-                // In a real app, save result.AccountId or JWT to localStorage
                 const accId = result.accountId || 1;
+                const displayName = result.displayName || email.split('@')[0];
                 localStorage.setItem('accountId', accId);
                 localStorage.setItem('wm-active-account', accId);
-                const name = email.split('@')[0];
+                const name = displayName;
                 const acc = { id: accId, name: name, email: email, initials: name.substring(0,2).toUpperCase(), color: '#6366F1' };
                 localStorage.setItem('wm-accounts', JSON.stringify([acc]));
                 window.location.href = 'index.html';
+            } else {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                
-                // Show error if login failed
-                if (result === false) {
-                    alert('Invalid credentials.');
-                } else if (result && result.error) {
-                    alert(result.error);
-                }
+                // show error
+                const errDiv = document.getElementById('login-error') || (() => { const d = document.createElement('div'); d.id='login-error'; d.style.cssText='color:#EF4444;margin-top:10px;text-align:center;font-size:.9rem'; document.getElementById('login-form').appendChild(d); return d; })();
+                errDiv.textContent = 'Invalid credentials or could not reach mail server.';
             }
         });
     </script>

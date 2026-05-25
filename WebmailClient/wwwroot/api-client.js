@@ -5,10 +5,7 @@ const API = {
             const res = await fetch(`/api/emails?accountId=${accountId}&folder=${folder}&skip=${skip}&take=${take}`);
             if (!res.ok) throw new Error('Failed to fetch emails');
             return await res.json();
-        } catch (e) {
-            console.error(e);
-            return [];
-        }
+        } catch (e) { console.error(e); return []; }
     },
     
     async getEmailBody(accountId, folder, messageId) {
@@ -23,19 +20,37 @@ const API = {
         }
     },
     
-    async sendEmail(accountId, to, subject, body) {
+    async sendEmail(accountId, to, subject, body, cc = '') {
         try {
             const res = await fetch(`/api/emails/send?accountId=${accountId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ to, subject, body })
+                body: JSON.stringify({ to, cc, subject, body })
             });
             if (!res.ok) throw new Error('Failed to send email');
             return true;
-        } catch (e) {
-            console.error(e);
-            return false;
-        }
+        } catch (e) { console.error(e); return false; }
+    },
+
+    async deleteEmail(accountId, folder, messageId) {
+        try {
+            const res = await fetch(`/api/emails/${encodeURIComponent(messageId)}?accountId=${accountId}&folder=${folder}`, { method: 'DELETE' });
+            return res.ok;
+        } catch (e) { console.error(e); return false; }
+    },
+
+    async markEmail(accountId, folder, messageId, read) {
+        try {
+            const res = await fetch(`/api/emails/${encodeURIComponent(messageId)}/mark?accountId=${accountId}&folder=${folder}&read=${read}`, { method: 'POST' });
+            return res.ok;
+        } catch (e) { console.error(e); return false; }
+    },
+
+    async moveEmail(accountId, folder, messageId, targetFolder) {
+        try {
+            const res = await fetch(`/api/emails/${encodeURIComponent(messageId)}/move?accountId=${accountId}&folder=${folder}&targetFolder=${encodeURIComponent(targetFolder)}`, { method: 'POST' });
+            return res.ok;
+        } catch (e) { console.error(e); return false; }
     },
 
     async saveSettings(accountId, settings) {
@@ -46,10 +61,7 @@ const API = {
                 body: JSON.stringify(settings)
             });
             return res.ok;
-        } catch (e) {
-            console.error(e);
-            return false;
-        }
+        } catch (e) { console.error(e); return false; }
     },
 
     async blockAddress(accountId, emailOrDomain) {
@@ -72,22 +84,8 @@ const API = {
                     smtpPort: smtpPort || 0
                 })
             });
-            
-            if (res.status === 429) {
-                alert('Too many login attempts. Please try again in 5 minutes.');
-                return null;
-            }
-            if (!res.ok) {
-                try {
-                    const errObj = await res.json();
-                    if (errObj && errObj.error) {
-                        alert(errObj.error);
-                        return null;
-                    }
-                } catch(e) {}
-                alert('Invalid credentials or failed to connect to mail server.');
-                return null;
-            }
+            if (res.status === 429) { window.showToast?.('Too many login attempts. Try again in 5 minutes.', 'error'); return null; }
+            if (!res.ok) return null;
             return await res.json();
         } catch(e) { console.error(e); return null; }
     },
@@ -97,7 +95,7 @@ const API = {
             const res = await fetch(`/api/settings/storage?accountId=${accountId}`);
             if (!res.ok) return null;
             return await res.json();
-        } catch(e) { console.error(e); return null; }
+        } catch(e) { return null; }
     },
 
     async search(accountId, query) {
@@ -239,7 +237,7 @@ function renderEmailList(emails, listContainer, emptyIcon, emptyMsg, accountId) 
             
             document.querySelector('.app-container')?.classList.add('viewing-mail');
             
-            await renderEmailView(accountId, email);
+            await renderEmailView(accountId, email, item);
         });
         
         listContainer.appendChild(item);
@@ -263,7 +261,7 @@ async function loadEmails(folder, emptyIcon, emptyMsg) {
     renderEmailList(emails, listContainer, emptyIcon, emptyMsg, accountId);
 }
 
-async function renderEmailView(accountId, email) {
+async function renderEmailView(accountId, email, listItem) {
     const subjectEl = document.querySelector('.view-subject');
     const senderNameEl = document.querySelector('.sender-details .name');
     const senderEmailEl = document.querySelector('.sender-details .email');
@@ -271,29 +269,64 @@ async function renderEmailView(accountId, email) {
     const bodyEl = document.querySelector('.mail-body');
     const viewMeta = document.querySelector('.view-meta');
     
-    if (viewMeta) viewMeta.style.display = ''; // Restore flex display
+    if (viewMeta) viewMeta.style.display = ''; 
     if (!subjectEl || !bodyEl) return;
     
     subjectEl.textContent = email.subject;
     
-    // Extract name and email from "Name <email>" format if possible
     let name = email.from;
     let address = email.from;
     const match = email.from.match(/(.*)<(.*)>/);
-    if (match) {
-        name = match[1].trim();
-        address = match[2].trim();
-    }
+    if (match) { name = match[1].trim(); address = match[2].trim(); }
     
     if (senderNameEl) senderNameEl.textContent = name;
     if (senderEmailEl) senderEmailEl.textContent = address;
     if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
     
-    bodyEl.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--brand-action);"><i class="fa-solid fa-circle-notch fa-spin fa-2x"></i></div>';
+    bodyEl.innerHTML = '<div style="padding:40px;text-align:center;color:var(--brand-action);"><i class="fa-solid fa-circle-notch fa-spin fa-2x"></i></div>';
     
     const htmlBody = await API.getEmailBody(accountId, email.folder, email.messageId);
-    
-    bodyEl.innerHTML = htmlBody || '<div style="padding: 20px; color: var(--text-muted);">This message has no content.</div>';
+    bodyEl.innerHTML = htmlBody || '<div style="padding:20px;color:var(--text-muted);">This message has no content.</div>';
+
+    // Auto mark as read on IMAP
+    if (!email.isRead) {
+        API.markEmail(accountId, email.folder, email.messageId, true);
+        if (listItem) listItem.classList.remove('unread');
+        email.isRead = true;
+    }
+
+    // Wire action buttons
+    const actions = document.querySelector('.view-actions');
+    if (actions) {
+        // Reply
+        const replyBtn = actions.querySelector('.action-btn:nth-child(1)');
+        if (replyBtn) replyBtn.onclick = () => {
+            const params = new URLSearchParams({ to: address, subject: `Re: ${email.subject}`, body: `<br><br><blockquote style="border-left:3px solid #6366F1;padding-left:12px;color:#9CA3AF">From: ${email.from}<br>${htmlBody}</blockquote>` });
+            window.location.href = `compose.html?${params}`;
+        };
+        // Forward
+        const fwdBtn = actions.querySelector('.action-btn:nth-child(2)');
+        if (fwdBtn) fwdBtn.onclick = () => {
+            const params = new URLSearchParams({ subject: `Fwd: ${email.subject}`, body: `<br><br><blockquote style="border-left:3px solid #6366F1;padding-left:12px;color:#9CA3AF">---------- Forwarded Message ----------<br>From: ${email.from}<br>${htmlBody}</blockquote>` });
+            window.location.href = `compose.html?${params}`;
+        };
+        // Delete
+        const delBtn = actions.querySelector('.action-btn.danger');
+        if (delBtn) delBtn.onclick = async () => {
+            delBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            const ok = await API.deleteEmail(accountId, email.folder, email.messageId);
+            if (ok) {
+                window.showToast?.('Email deleted', 'success');
+                if (listItem) listItem.remove();
+                bodyEl.innerHTML = '<div style="padding:60px;text-align:center;color:var(--text-muted);"><i class="fa-solid fa-trash fa-3x" style="opacity:.2;margin-bottom:16px;"></i><br>Email deleted.</div>';
+                if (viewMeta) viewMeta.style.display = 'none';
+                subjectEl.textContent = 'No Message Selected';
+            } else {
+                window.showToast?.('Could not delete email', 'error');
+                delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            }
+        };
+    }
 }
 
 function escapeHtml(unsafe) {

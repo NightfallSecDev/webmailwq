@@ -11,6 +11,7 @@ namespace WebmailClient.Data
         public DbSet<EmailFilterRule> EmailFilterRules => Set<EmailFilterRule>();
         public DbSet<BlockedAddress> BlockedAddresses => Set<BlockedAddress>();
         public DbSet<ActiveSession> ActiveSessions => Set<ActiveSession>();
+        public DbSet<Contact> Contacts => Set<Contact>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

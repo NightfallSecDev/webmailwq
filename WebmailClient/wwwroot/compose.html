@@ -629,8 +629,9 @@ document.getElementById('save-draft-btn').addEventListener('click', () => {
 // ── Send Button ────────────────────────────────────
 document.getElementById('send-btn').addEventListener('click', async () => {
     const to = document.getElementById('field-to').value.trim();
-    const subject = document.getElementById('field-subject').value.trim();
-    if (!to) { document.getElementById('field-to').focus(); return; }
+    const subject = document.getElementById('field-subject').value.trim() || '(No Subject)';
+    const cc = document.getElementById('field-cc')?.value?.trim() || '';
+    if (!to) { window.showToast('Please enter a recipient', 'error'); document.getElementById('field-to').focus(); return; }
     
     let body = '';
     if (document.getElementById('code-container').classList.contains('visible')) {
@@ -642,10 +643,10 @@ document.getElementById('send-btn').addEventListener('click', async () => {
     const btn = document.getElementById('send-btn');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+    btn.disabled = true;
     
-    // Call the API
     const accountId = localStorage.getItem('accountId') || 1;
-    const success = await API.sendEmail(accountId, to, subject, body);
+    const success = await API.sendEmail(accountId, to, subject, body, cc);
     
     if (success) {
         btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Sent!';
@@ -654,25 +655,31 @@ document.getElementById('send-btn').addEventListener('click', async () => {
         setTimeout(() => window.location.href = 'sent.html', 1500);
     } else {
         btn.innerHTML = originalText;
+        btn.disabled = false;
         window.showToast('Failed to send email. Check backend.', 'error');
     }
 });
 
 // ── Format Code Placeholder ────────────────────────
 function formatCode() {
-    // Basic: just alert user. In production, integrate Prettier via CDN
     alert('For full code formatting, integrate Prettier.js.');
 }
 
 // ── Set initial save time ──────────────────────────
 document.getElementById('save-time').textContent = '';
 
-// Load real user data
+// Load real user data + pre-fill from URL params (reply/forward)
 document.addEventListener('DOMContentLoaded', () => {
     const accs = JSON.parse(localStorage.getItem('wm-accounts')) || [];
     if (accs.length > 0) {
         document.getElementById('compose-from').value = accs[0].email || '';
     }
+
+    // Pre-fill fields from URL query params (used by Reply / Forward)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('to'))      document.getElementById('field-to').value = params.get('to');
+    if (params.get('subject')) document.getElementById('field-subject').value = params.get('subject');
+    if (params.get('body'))    document.getElementById('rich-editor').innerHTML = params.get('body');
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>

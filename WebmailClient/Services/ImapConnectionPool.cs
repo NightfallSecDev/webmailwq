@@ -43,11 +43,14 @@ namespace WebmailClient.Services
 
             _logger.LogInformation("Creating new IMAP connection for {Email}", email);
             var client = new ImapClient();
+            // Disable SSL certificate validation for localhost self-signed certs
+            client.ServerCertificateValidationCallback = (s, c, h, e) => true;
             var options = port == 143 ? SecureSocketOptions.None : SecureSocketOptions.Auto;
             await client.ConnectAsync(server, port, options, cancellationToken);
             
-            var username = email.Contains("@") ? email.Split('@')[0] : email;
-            await client.AuthenticateAsync(username, password, cancellationToken);
+            // Use the FULL email address as username — Dovecot expects user@domain
+            // Roundcube does the same (rcube_imap_generic.php line 751-752)
+            await client.AuthenticateAsync(email, password, cancellationToken);
             return client;
         }
 
