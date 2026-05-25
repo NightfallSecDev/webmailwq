@@ -40,7 +40,7 @@ namespace WebmailClient.Services
             var client = await _pool.GetClientAsync(account.ImapServer, account.ImapPort, account.EmailAddress, account.EncryptedPassword, cancellationToken);
             try
             {
-                IMailFolder folder;
+                IMailFolder? folder = null;
                 try {
                     if (folderName.Equals("inbox", StringComparison.OrdinalIgnoreCase)) folder = client.Inbox;
                     else if (folderName.Equals("sent", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Sent) ?? await client.GetFolderAsync("Sent", cancellationToken);
@@ -51,6 +51,8 @@ namespace WebmailClient.Services
                 } catch (FolderNotFoundException) {
                     yield break;
                 }
+
+                if (folder == null) yield break;
 
                 await folder.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
 
@@ -91,7 +93,7 @@ namespace WebmailClient.Services
             var client = await _pool.GetClientAsync(account.ImapServer, account.ImapPort, account.EmailAddress, account.EncryptedPassword, cancellationToken);
             try
             {
-                IMailFolder folder;
+                IMailFolder? folder = null;
                 try {
                     if (folderName.Equals("inbox", StringComparison.OrdinalIgnoreCase)) folder = client.Inbox;
                     else if (folderName.Equals("sent", StringComparison.OrdinalIgnoreCase)) folder = client.GetFolder(SpecialFolder.Sent) ?? await client.GetFolderAsync("Sent", cancellationToken);
@@ -102,6 +104,8 @@ namespace WebmailClient.Services
                 } catch (FolderNotFoundException) {
                     return string.Empty;
                 }
+
+                if (folder == null) return string.Empty;
 
                 await folder.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
 
