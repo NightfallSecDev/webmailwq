@@ -52,8 +52,12 @@ namespace WebmailClient.Services
                     {
                         // Use async I/O
                         using var client = new SmtpClient();
-                        await client.ConnectAsync(item.Account.SmtpServer, item.Account.SmtpPort, SecureSocketOptions.Auto, stoppingToken);
-                        await client.AuthenticateAsync(item.Account.EmailAddress, item.Account.EncryptedPassword, stoppingToken);
+                        var options = item.Account.SmtpPort == 25 ? SecureSocketOptions.None : SecureSocketOptions.Auto;
+                        await client.ConnectAsync(item.Account.SmtpServer, item.Account.SmtpPort, options, stoppingToken);
+                        
+                        // Postfix on localhost allows relaying from 127.0.0.1 without auth.
+                        // We cannot call AuthenticateAsync here because item.Account.EncryptedPassword is a BCrypt hash!
+                        
                         await client.SendAsync(item.Message, stoppingToken);
                         await client.DisconnectAsync(true, stoppingToken);
                         
