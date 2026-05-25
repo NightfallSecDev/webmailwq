@@ -131,8 +131,7 @@ const AccountManager = (() => {
     const ACTIVE_KEY  = 'wm-active-account';
 
     const defaultAccounts = [
-        { id: 1, name: 'Sarah Jenkins', email: 'sarah.jenkins@company.com', initials: 'S', color: '#6366F1' },
-        { id: 2, name: 'Dev Account',   email: 'dev@techflow.io',           initials: 'D', color: '#10B981' }
+        { id: 1, name: 'User', email: 'user@localhost', initials: 'U', color: '#6366F1' }
     ];
 
     function getAccounts() {

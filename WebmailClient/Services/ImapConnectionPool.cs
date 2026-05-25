@@ -43,8 +43,11 @@ namespace WebmailClient.Services
 
             _logger.LogInformation("Creating new IMAP connection for {Email}", email);
             var client = new ImapClient();
-            await client.ConnectAsync(server, port, SecureSocketOptions.Auto, cancellationToken);
-            await client.AuthenticateAsync(email, password, cancellationToken);
+            var options = port == 143 ? SecureSocketOptions.None : SecureSocketOptions.Auto;
+            await client.ConnectAsync(server, port, options, cancellationToken);
+            
+            var username = email.Contains("@") ? email.Split('@')[0] : email;
+            await client.AuthenticateAsync(username, password, cancellationToken);
             return client;
         }
 

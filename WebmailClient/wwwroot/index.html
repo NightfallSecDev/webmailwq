@@ -61,10 +61,10 @@
         </div>
         
 <div class="sidebar-profile" id="profile-trigger">
-            <div class="profile-avatar">S</div>
+            <div class="profile-avatar" id="profile-avatar">U</div>
             <div class="profile-info">
-                <div class="profile-name">Sarah Jenkins</div>
-                <div class="profile-email">sarah@company.com</div>
+                <div class="profile-name" id="profile-name">User</div>
+                <div class="profile-email" id="profile-email">user@localhost</div>
             </div>
             <i class="fa-solid fa-chevron-up profile-chevron"></i>
             <div class="profile-dropdown" id="profile-dropdown">
@@ -90,46 +90,7 @@
             </div>
         </div>
         <div class="mail-list">
-            <div class="mail-item unread active">
-                <div class="mail-header-info">
-                    <span class="sender">Security Team</span>
-                    <span class="date">10:42 AM</span>
-                </div>
-                <div class="subject">Critical: Account Sign-in Attempt</div>
-                <div class="preview">We detected a new sign-in to your account from an unrecognized device…</div>
-            </div>
-            <div class="mail-item">
-                <div class="mail-header-info">
-                    <span class="sender">Sarah Jenkins</span>
-                    <span class="date">Yesterday</span>
-                </div>
-                <div class="subject">Q3 Marketing Strategy Briefing</div>
-                <div class="preview">Please review the attached deck for our upcoming Q3 push…</div>
-            </div>
-            <div class="mail-item">
-                <div class="mail-header-info">
-                    <span class="sender">GitHub</span>
-                    <span class="date">Oct 12</span>
-                </div>
-                <div class="subject">[LETTERDUCK] Pull Request #42</div>
-                <div class="preview">You have been requested to review a pull request by @devteam…</div>
-            </div>
-            <div class="mail-item unread">
-                <div class="mail-header-info">
-                    <span class="sender">Finance Dept</span>
-                    <span class="date">Oct 11</span>
-                </div>
-                <div class="subject">Q2 Budget Approval Required</div>
-                <div class="preview">Please approve the attached budget summary before EOD Friday…</div>
-            </div>
-            <div class="mail-item">
-                <div class="mail-header-info">
-                    <span class="sender">Notion</span>
-                    <span class="date">Oct 10</span>
-                </div>
-                <div class="subject">Your weekly digest is ready</div>
-                <div class="preview">Here's a roundup of what your team worked on this week…</div>
-            </div>
+            <!-- Emails will be loaded here dynamically by api-client.js -->
         </div>
     </section>
 
@@ -137,15 +98,14 @@
     <main class="mail-view-pane">
         <header class="view-header">
             <div class="view-header-top">
-                <h1 class="view-subject">Critical: Account Sign-in Attempt</h1>
-                
+                <h1 class="view-subject">No Message Selected</h1>
             </div>
-            <div class="view-meta">
+            <div class="view-meta" style="display: none;">
                 <div class="sender-profile">
-                    <div class="avatar">S</div>
+                    <div class="avatar"></div>
                     <div class="sender-details">
-                        <div class="name">Security Team <span class="pill blue" style="font-size:.7rem;">Official</span></div>
-                        <div class="email">security@company.com</div>
+                        <div class="name"></div>
+                        <div class="email"></div>
                     </div>
                 </div>
                 <div class="view-actions">
@@ -157,17 +117,9 @@
             </div>
         </header>
         <div class="mail-body">
-            <div class="info-banner red">
-                <i class="fa-solid fa-shield-halved"></i>
-                This email was flagged as a potential security alert. Review the details carefully.
+            <div style="padding: 60px; text-align: center; color: var(--text-muted);">
+                <i class="fa-regular fa-envelope-open fa-3x" style="opacity:0.2; margin-bottom: 16px;"></i><br>Select an item to read
             </div>
-            <p>Hello User,</p>
-            <p>We detected a new sign-in to your account from an unrecognized device. If this was you, you can safely ignore this message.</p>
-            <p><strong>Device:</strong> Linux OS (Web)<br>
-               <strong>Location:</strong> Seattle, WA, USA<br>
-               <strong>Time:</strong> 2026-05-24 · 10:42 AM</p>
-            <p>If this was <strong>not</strong> you, please reset your password immediately and enable two-factor authentication.</p>
-            <p>Regards,<br>Company Security Team</p>
         </div>
     </main>
 </div>

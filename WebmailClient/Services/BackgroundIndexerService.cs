@@ -7,6 +7,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using Lucene.Net.Search;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -76,10 +77,10 @@ namespace WebmailClient.Services
             
             var accountQuery = new TermQuery(new Term("AccountId", accountId.ToString()));
             
-            var boolQuery = new Lucene.Net.Search.BooleanQuery
+            var boolQuery = new BooleanQuery
             {
-                { accountQuery, Lucene.Net.Search.Occur.MUST },
-                { textQuery, Lucene.Net.Search.Occur.MUST }
+                { accountQuery, Occur.MUST },
+                { textQuery, Occur.MUST }
             };
 
             var hits = searcher.Search(boolQuery, 50).ScoreDocs;

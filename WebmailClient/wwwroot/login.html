@@ -250,7 +250,12 @@
             const result = await API.login(email, password, imapServer, imapPort, smtpServer, smtpPort);
             if (result) {
                 // In a real app, save result.AccountId or JWT to localStorage
-                localStorage.setItem('accountId', result.accountId || 1);
+                const accId = result.accountId || 1;
+                localStorage.setItem('accountId', accId);
+                localStorage.setItem('wm-active-account', accId);
+                const name = email.split('@')[0];
+                const acc = { id: accId, name: name, email: email, initials: name.substring(0,2).toUpperCase(), color: '#6366F1' };
+                localStorage.setItem('wm-accounts', JSON.stringify([acc]));
                 window.location.href = 'index.html';
                 btn.innerHTML = originalText;
                 btn.disabled = false;
