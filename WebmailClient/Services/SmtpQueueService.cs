@@ -81,7 +81,8 @@ namespace WebmailClient.Services
 
                                 if (sentFolder != null) 
                                 {
-                                    await sentFolder.AppendAsync(item.Message, MailKit.MessageFlags.Seen, stoppingToken);
+                                    var request = new MailKit.AppendRequest(item.Message) { Flags = MailKit.MessageFlags.Seen };
+                                    await sentFolder.AppendAsync(request, stoppingToken);
                                     _logger.LogInformation("Successfully appended email to Sent folder for {Email}", item.Account.EmailAddress);
                                 }
                             }
